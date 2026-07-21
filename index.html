@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Incoming Private Video Call...</title>
+    <title>Incoming Video Call...</title>
     
-    <!-- Open Graph Meta Tags for Social Media Preview Thumbnail -->
-    <meta property="og:title" content="Incoming Private Video Call..." />
-    <meta property="og:description" content="User_8492 is inviting you to a private room. Connect instantly!" />
+    <meta property="og:title" content="Incoming Video Call..." />
+    <meta property="og:description" content="You have an incoming private video call." />
     <meta property="og:image" content="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" />
     <meta property="og:type" content="website" />
     
-    <!-- Twitter Card Meta Tags for Twitter/X Preview -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Incoming Private Video Call..." />
-    <meta name="twitter:description" content="User_8492 is inviting you to a private room. Connect instantly!" />
+    <meta name="twitter:title" content="Incoming Video Call..." />
+    <meta name="twitter:description" content="You have an incoming private video call." />
     <meta name="twitter:image" content="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
@@ -29,155 +27,233 @@
         /* Background Video (Highly Blurred) */
         .bg-video { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; filter: blur(25px) brightness(0.35); z-index: 1; 
-            transform: scale(1.1); /* Prevents blur edges from showing */
+            object-fit: cover; filter: blur(28px) brightness(0.3); z-index: 1; 
+            transform: scale(1.15); 
         }
         
         /* Main UI Layer */
         .ui-layer { 
             position: relative; z-index: 10; display: flex; flex-direction: column; 
-            height: 100%; justify-content: space-between; padding: 20px; box-sizing: border-box; 
+            height: 100%; justify-content: space-between; padding: 30px 20px; box-sizing: border-box; 
         }
         
-        /* Top Status Bar & Sound Button */
+        /* Top Status Bar */
         .top-bar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600;
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: 0.5px;
         }
-        .live-badge { 
-            background: #FF3B30; color: white; padding: 4px 10px; border-radius: 5px; 
-            font-weight: bold; animation: pulse 1.5s infinite; display: flex; align-items: center; gap: 5px;
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        /* Sound Toggle Button */
-        .sound-btn {
-            background: rgba(0, 0, 0, 0.6); border: 1px solid #555; color: white;
-            padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
-            cursor: pointer; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px);
-            transition: 0.3s;
-        }
-        .sound-btn:hover { background: rgba(52, 199, 89, 0.4); border-color: #34C759; }
         
         /* Caller Profile Area */
-        .caller-info { text-align: center; margin-top: 15px; }
+        .caller-info { text-align: center; margin-top: 40px; }
         .profile-ring {
-            width: 110px; height: 110px; margin: 0 auto; border-radius: 50%; 
-            border: 3px solid #34C759; animation: ringPulse 2s infinite; 
-            overflow: hidden; background: rgba(255,255,255,0.1); display: flex;
-            align-items: center; justify-content: center;
+            width: 120px; height: 120px; margin: 0 auto; border-radius: 50%; 
+            border: 2px solid transparent; animation: callPulse 2s infinite; 
+            overflow: hidden; background: rgba(255,255,255,0.05); display: flex;
+            align-items: center; justify-content: center; position: relative;
         }
-        .profile-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; filter: blur(2px); }
-        @keyframes ringPulse { 
-            0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6); } 
-            70% { box-shadow: 0 0 0 25px rgba(52, 199, 89, 0); } 
-            100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); } 
+        .profile-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: blur(4px); }
+        @keyframes callPulse { 
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 
+            70% { box-shadow: 0 0 0 30px rgba(255, 255, 255, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } 
         }
-        .caller-name { font-size: 32px; font-weight: 700; margin: 15px 0 5px 0; letter-spacing: 1px; }
-        .status-text { font-size: 16px; color: #34C759; margin-top: 5px; font-weight: 600;}
+        .caller-name { font-size: 34px; font-weight: 600; margin: 20px 0 8px 0; letter-spacing: 0.5px; }
+        .status-text { font-size: 17px; color: #aaa; font-weight: 400; animation: blink 1.5s infinite;}
+        @keyframes blink { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
+        
         .bio-text { 
-            font-size: 14px; color: #eee; margin-top: 15px; background: rgba(0,0,0,0.6); 
-            padding: 10px 15px; border-radius: 20px; display: inline-block; border: 1px solid #333;
+            font-size: 13px; color: #ff4d4d; margin-top: 25px; background: rgba(0,0,0,0.5); 
+            padding: 8px 16px; border-radius: 20px; display: inline-block; border: 1px solid rgba(255, 77, 77, 0.3);
+            font-weight: 500;
         }
         
-        /* Urgency / FOMO Box */
-        .urgency-box { 
-            text-align: center; background: rgba(255, 59, 48, 0.15); border: 1px solid #FF3B30; 
-            padding: 12px; border-radius: 12px; margin: 15px auto; max-width: 280px; font-size: 14px; 
-        }
-        
-        /* Action Buttons (Answer / Decline) */
+        /* Action Buttons */
         .action-buttons { 
-            display: flex; justify-content: space-evenly; padding-bottom: 30px; align-items: center; 
+            display: flex; justify-content: space-around; padding-bottom: 40px; align-items: center; 
+            width: 100%; max-width: 320px; margin: 0 auto;
         }
         .btn { 
             display: flex; flex-direction: column; align-items: center; 
             text-decoration: none; border: none; background: none; cursor: pointer; 
         }
         .btn-icon { 
-            width: 75px; height: 75px; border-radius: 50%; display: flex; 
-            justify-content: center; align-items: center; font-size: 35px; color: white; 
-            margin-bottom: 10px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            width: 70px; height: 70px; border-radius: 50%; display: flex; 
+            justify-content: center; align-items: center; font-size: 32px; color: white; 
+            margin-bottom: 12px; transition: transform 0.2s; 
         }
-        .btn:active .btn-icon { transform: scale(0.9); }
         .btn-decline .btn-icon { background: #FF3B30; }
-        .btn-answer .btn-icon { background: #34C759; animation: bounce 2s infinite; }
-        @keyframes bounce { 
+        .btn-answer .btn-icon { background: #34C759; animation: answerBounce 2s infinite; }
+        @keyframes answerBounce { 
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 
-            40% {transform: translateY(-12px);} 60% {transform: translateY(-6px);} 
+            40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} 
         }
-        .btn-text { color: white; font-size: 15px; font-weight: 600; }
+        .btn-text { color: white; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
         
         /* Fake Chat Popup */
         .chat-popup { 
-            position: absolute; bottom: 140px; left: 20px; background: rgba(0,0,0,0.75); 
-            padding: 12px 18px; border-radius: 15px; border-bottom-left-radius: 0; display: flex; 
-            align-items: center; gap: 10px; backdrop-filter: blur(5px); border: 1px solid #333;
-            opacity: 0; animation: slideUp 0.5s forwards 3s; 
+            position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%);
+            background: rgba(20,20,20,0.85); padding: 14px 20px; border-radius: 24px; 
+            display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.1); opacity: 0; 
+            animation: slideUp 0.6s forwards 3.5s; width: max-content; max-width: 90%;
         }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(-10px); } }
-        .typing-dots span { 
-            width: 6px; height: 6px; background: #34C759; border-radius: 50%; 
-            display: inline-block; animation: typing 1.4s infinite; margin: 0 2px; 
-        }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes slideUp { to { opacity: 1; bottom: 180px; } }
         
-        /* Fake Secure Loading Screen */
-        .loader-bg { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; 
-            z-index: 100; display: flex; justify-content: center; align-items: center; 
-            flex-direction: column; transition: opacity 0.5s; 
-        }
-        .spinner { 
-            width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); 
-            border-top-color: #34C759; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; 
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Security Check Modal */
+        /* ---------------------------------------------------
+           NEW DATING APP STYLE MODAL (Based on image_b9e93c.jpg)
+           --------------------------------------------------- */
         .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); 
-            z-index: 50; display: none; justify-content: center; align-items: center; backdrop-filter: blur(15px); 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 50; display: none; 
+            justify-content: center; align-items: center; backdrop-filter: blur(10px); 
         }
-        .modal-content { 
-            background: #1c1c1c; padding: 30px 25px; border-radius: 20px; text-align: center; 
-            width: 85%; max-width: 360px; border: 1px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+        
+        .dating-modal {
+            background: #0f0f13; /* Very dark premium background */
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            width: 85%;
+            max-width: 340px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+            border: 1px solid #222;
         }
-        .modal-content h3 { margin-top: 0; color: #fff; font-size: 22px; }
-        .modal-content p { color: #bbb; font-size: 15px; margin-bottom: 25px; line-height: 1.5; }
-        .modal-btn { 
-            background: #34C759; color: white; border: none; padding: 14px 20px; 
-            border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; 
-            cursor: pointer; margin-bottom: 12px; transition: 0.2s;
+
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            color: #888;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .modal-btn:hover { background: #2db34d; }
-        .modal-btn-no { background: transparent; color: #888; border: 1px solid #555; }
+        
+        .modal-close-btn:hover { color: #fff; }
+
+        /* The Yellow Private Call Badge */
+        .private-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #FFD700;
+            color: #FFD700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        /* The Pink Glowing Profile Picture */
+        .profile-glow-container {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 10px auto;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, #ff0055, #ff0099, #ff5e00);
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); /* Glowing effect */
+        }
+
+        .profile-glow-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #0f0f13; /* Inner dark border */
+        }
+
+        .modal-caller-name {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 5px 0 2px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Verified Tick */
+        .verified-tick {
+            color: #1DA1F2;
+            font-size: 15px;
+        }
+
+        .modal-caller-handle {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* Clean descriptive text instead of coins */
+        .modal-desc-text {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        /* Bright Pink Action Button */
+        .btn-continue {
+            background: #ff0055;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-continue:hover {
+            background: #e6004c;
+        }
         
     </style>
 </head>
 <body>
 
-    <!-- Fake Secure Connection Screen -->
-    <div class="loader-bg" id="loader">
-        <div class="spinner"></div>
-        <div style="color: #aaa; font-size: 15px; font-weight:600;">Establishing secure connection...</div>
-        <div style="color: #555; font-size: 12px; margin-top: 8px;">100% Anonymous & Private</div>
-    </div>
-
-    <!-- Security Check Modal (Appears when they click Answer) -->
-    <div class="modal-overlay" id="ageModal">
-        <div class="modal-content">
-            <h3>🔒 18+ Private Room</h3>
-            <p>If you are 18+, you will instantly join my live. No registration or extra steps required!</p>
+    <!-- NEW DATING APP STYLE MODAL -->
+    <div class="modal-overlay" id="callModal">
+        <div class="dating-modal">
+            <!-- Close Button (Fake close to build trust) -->
+            <div class="modal-close-btn" onclick="document.getElementById('callModal').style.display='none'">✖</div>
+            
+            <!-- Top Badge -->
+            <div class="private-badge">
+                🔑 Private Call
+            </div>
+            
+            <!-- Profile Picture with Pink Glow -->
+            <div class="profile-glow-container">
+                <img src="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" alt="Caller">
+            </div>
+            
+            <!-- Name and Username -->
+            <div class="modal-caller-name">
+                Private Caller <span class="verified-tick">✔</span>
+            </div>
+            <div class="modal-caller-handle">@live_cam_host</div>
+            
+            <!-- Safe, Trust-building Text (No Coins) -->
+            <div class="modal-desc-text">
+                <strong style="color: white; font-size: 15px;">18+ Verification Required</strong><br>
+                If you are 18+, you will instantly join the video call. No extra steps needed.
+            </div>
             
             <!-- YOUR PROVIDED OFFER LINK -->
             <a href="https://bedjfha.litracksm.com/s/62b4abc4a39b9" style="text-decoration: none;">
-                <button class="modal-btn">Yes, I am 18+ (Connect Instantly)</button>
+                <button class="btn-continue">Continue</button>
             </a>
-            
-            <button class="modal-btn modal-btn-no" onclick="alert('Connection closed.')">No, I am under 18</button>
         </div>
     </div>
 
@@ -189,41 +265,25 @@
     <!-- Main Live UI -->
     <div class="ui-layer">
         
-        <!-- Top Status Bar with Sound Toggle -->
+        <!-- Top Status Bar -->
         <div class="top-bar">
-            <div class="live-badge">
-                <span style="display:inline-block; width:8px; height:8px; background:white; border-radius:50%;"></span> LIVE
-            </div>
-            <button class="sound-btn" onclick="toggleSound()" id="soundBtn">🔇 Tap to Unmute</button>
-            <div>👁️ <span id="viewers">43</span> watching</div>
+            🔒 End-to-End Encrypted
         </div>
 
         <!-- Caller Profile Information -->
         <div class="caller-info">
             <div class="profile-ring">
-                <!-- Anonymous icon/image -->
-                <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=128" class="profile-img" alt="Caller">
+                <img src="https://ui-avatars.com/api/?name=P&background=random&color=fff&size=128" class="profile-img" alt="Caller">
             </div>
-            <h2 class="caller-name">User_8492</h2>
-            <div class="status-text">Incoming Video Call...</div>
-            <!-- NO SCREEN RECORD WARNING HOOK -->
-            <div class="bio-text">"⚠️ Please do NOT screen record my live."</div>
-        </div>
-
-        <!-- FOMO / Urgency Box -->
-        <div class="urgency-box">
-            ⚠️ Call expires in <strong id="timer" style="color:white; font-size: 16px;">02:59</strong><br>
-            <span style="font-size: 12px; color: #ffaaaa; display:block; margin-top:5px;">Room Capacity: 99/100 (Only 1 spot left)</span>
+            <h2 class="caller-name">Private Caller</h2>
+            <div class="status-text" id="callStatus">Ringing...</div>
+            <div class="bio-text">⚠️ Please do NOT screen record this call.</div>
         </div>
 
         <!-- Fake Chat Typing Notification -->
-        <div class="chat-popup">
-            <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
-            <div style="font-size: 13px;">
-                <div style="color: #aaa; font-size: 11px;">User_8492</div>
-                <div class="typing-dots">
-                    <span></span><span></span><span></span>
-                </div>
+        <div class="chat-popup" id="chatMessage">
+            <div style="font-size: 14px; color: white; font-weight: 500;">
+                Are you there? Accept the call... 🤫
             </div>
         </div>
 
@@ -234,73 +294,39 @@
                 <div class="btn-text">Decline</div>
             </button>
             
+            <!-- Triggers the new premium modal -->
             <button class="btn btn-answer" onclick="showModal()">
                 <div class="btn-icon">📹</div>
-                <div class="btn-text">Answer Video Call</div>
+                <div class="btn-text">Answer</div>
             </button>
         </div>
     </div>
 
     <!-- JavaScript Tricks -->
     <script>
-        // 1. Remove Fake Loader
-        setTimeout(() => {
-            const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
-            setTimeout(() => loader.style.display = 'none', 500);
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        }, 2000);
-
-        // 2. Sound Toggle Function
-        function toggleSound() {
-            const video = document.getElementById('bgVideo');
-            const btn = document.getElementById('soundBtn');
-            if (video.muted) {
-                video.muted = false;
-                btn.innerHTML = '🔊 Sound On';
-                btn.style.background = 'rgba(52, 199, 89, 0.6)';
-                btn.style.borderColor = '#34C759';
-            } else {
-                video.muted = true;
-                btn.innerHTML = '🔇 Tap to Unmute';
-                btn.style.background = 'rgba(0, 0, 0, 0.6)';
-                btn.style.borderColor = '#555';
+        // Vibrate phone slightly when page loads (simulate incoming call)
+        window.onload = () => {
+            if(navigator.vibrate) {
+                setInterval(() => {
+                    navigator.vibrate([500, 300, 500]);
+                }, 2000);
             }
-        }
+        };
 
-        // 3. Fake Viewers Count
-        let viewers = 43;
-        setInterval(() => {
-            viewers = viewers + Math.floor(Math.random() * 5) - 2;
-            if(viewers < 35) viewers = 35;
-            document.getElementById('viewers').innerText = viewers;
+        // Change status text naturally
+        setTimeout(() => {
+            document.getElementById('callStatus').innerText = "Connecting...";
+        }, 5000);
+
+        // Play a soft beep for the message pop-up
+        setTimeout(() => {
+            if(navigator.vibrate) navigator.vibrate(150);
         }, 3500);
 
-        // 4. Fake Countdown Timer
-        let time = 179;
-        setInterval(() => {
-            if (time <= 0) return;
-            time--;
-            let m = Math.floor(time / 60);
-            let s = time % 60;
-            document.getElementById('timer').innerText = `0${m}:${s < 10 ? '0' : ''}${s}`;
-        }, 1000);
-
-        // 5. Change typing dots to message
-        setTimeout(() => {
-            const chat = document.querySelector('.chat-popup');
-            chat.innerHTML = `
-                <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
-                <div style="font-size: 14px;">
-                    <div style="color: #aaa; font-size: 11px;">User_8492</div>
-                    <div style="color: white; font-weight: bold;">Connect with me instantly! 😈</div>
-                </div>`;
-            if(navigator.vibrate) navigator.vibrate(100);
-        }, 7000);
-
-        // 6. Show Modal on Answer
+        // Show Custom Premium Modal on Answer
         function showModal() {
-            document.getElementById('ageModal').style.display = 'flex';
+            document.getElementById('callModal').style.display = 'flex';
+            if(navigator.vibrate) navigator.vibrate(0); // stop vibrating
         }
     </script>
 </body>
