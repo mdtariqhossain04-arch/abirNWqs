@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Incoming Private Call...</title>
+    <title>Incoming Private Video Call...</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
@@ -13,10 +13,11 @@
             overflow: hidden; color: white; user-select: none; 
         }
         
-        /* Background Video (Blurred & Darkened) */
+        /* Background Video (Highly Blurred) */
         .bg-video { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; filter: blur(10px) brightness(0.4); z-index: 1; 
+            object-fit: cover; filter: blur(25px) brightness(0.35); z-index: 1; 
+            transform: scale(1.1); /* Prevents blur edges from showing */
         }
         
         /* Main UI Layer */
@@ -25,7 +26,7 @@
             height: 100%; justify-content: space-between; padding: 20px; box-sizing: border-box; 
         }
         
-        /* Top Status Bar */
+        /* Top Status Bar & Sound Button */
         .top-bar { 
             display: flex; justify-content: space-between; align-items: center; 
             font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600;
@@ -35,23 +36,32 @@
             font-weight: bold; animation: pulse 1.5s infinite; display: flex; align-items: center; gap: 5px;
         }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* Sound Toggle Button */
+        .sound-btn {
+            background: rgba(0, 0, 0, 0.6); border: 1px solid #555; color: white;
+            padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+        .sound-btn:hover { background: rgba(52, 199, 89, 0.4); border-color: #34C759; }
         
         /* Caller Profile Area */
-        .caller-info { text-align: center; margin-top: 30px; }
+        .caller-info { text-align: center; margin-top: 15px; }
         .profile-ring {
             width: 110px; height: 110px; margin: 0 auto; border-radius: 50%; 
             border: 3px solid #34C759; animation: ringPulse 2s infinite; 
             overflow: hidden; background: rgba(255,255,255,0.1); display: flex;
             align-items: center; justify-content: center;
         }
-        .profile-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; filter: blur(2px); }
         @keyframes ringPulse { 
             0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6); } 
             70% { box-shadow: 0 0 0 25px rgba(52, 199, 89, 0); } 
             100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); } 
         }
         .caller-name { font-size: 32px; font-weight: 700; margin: 15px 0 5px 0; letter-spacing: 1px; }
-        .status-text { font-size: 16px; color: #34C759; margin-top: 5px; }
+        .status-text { font-size: 16px; color: #34C759; margin-top: 5px; font-weight: 600;}
         .bio-text { 
             font-size: 14px; color: #eee; margin-top: 15px; background: rgba(0,0,0,0.6); 
             padding: 10px 15px; border-radius: 20px; display: inline-block; border: 1px solid #333;
@@ -85,7 +95,7 @@
         }
         .btn-text { color: white; font-size: 15px; font-weight: 600; }
         
-        /* Fake Chat Popup (Bottom Left) */
+        /* Fake Chat Popup */
         .chat-popup { 
             position: absolute; bottom: 140px; left: 20px; background: rgba(0,0,0,0.75); 
             padding: 12px 18px; border-radius: 15px; border-bottom-left-radius: 0; display: flex; 
@@ -159,31 +169,32 @@
         </div>
     </div>
 
-    <!-- Your Requested Background Video -->
-    <video autoplay muted loop playsinline class="bg-video">
-        <source src="https://github.com/mdtariqhossain04-arch/abirNWq/raw/refs/heads/main/01kxgfwkarnrkbzk7vcnpwqq9d%20(1).mp4" type="video/mp4">
+    <!-- Background Video with New Link -->
+    <video id="bgVideo" autoplay muted loop playsinline class="bg-video">
+        <source src="https://github.com/mdtariqhossain04-arch/abirNWqs/raw/refs/heads/main/4879430db60ae1f20d37bc5b8108931f(1).mp4" type="video/mp4">
     </video>
 
     <!-- Main Live UI -->
     <div class="ui-layer">
         
-        <!-- Top Status Bar -->
+        <!-- Top Status Bar with Sound Toggle -->
         <div class="top-bar">
-            <div><span id="clock">12:00</span></div>
             <div class="live-badge">
                 <span style="display:inline-block; width:8px; height:8px; background:white; border-radius:50%;"></span> LIVE
             </div>
+            <button class="sound-btn" onclick="toggleSound()" id="soundBtn">🔇 Tap to Unmute</button>
             <div>👁️ <span id="viewers">43</span> watching</div>
         </div>
 
-        <!-- Caller Profile Information -->
+        <!-- Caller Profile Information (No Specific Name) -->
         <div class="caller-info">
             <div class="profile-ring">
-                <img src="https://ui-avatars.com/api/?name=Charlotte&background=random&color=fff&size=128" class="profile-img" alt="Caller">
+                <!-- Anonymous icon/image -->
+                <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=128" class="profile-img" alt="Caller">
             </div>
-            <h2 class="caller-name">Charlotte</h2>
+            <h2 class="caller-name">User_8492</h2>
             <div class="status-text">Incoming Video Call...</div>
-            <div class="bio-text">"I lost a bet. Doing whatever you say... 😈"</div>
+            <div class="bio-text">"Camera is blurred for guests. Verify to watch 😈"</div>
         </div>
 
         <!-- FOMO / Urgency Box -->
@@ -192,11 +203,11 @@
             <span style="font-size: 12px; color: #ffaaaa; display:block; margin-top:5px;">Room Capacity: 99/100 (Only 1 spot left)</span>
         </div>
 
-        <!-- Fake Chat Typing Notification -->
+        <!-- Fake Chat Typing Notification (No Specific Name) -->
         <div class="chat-popup">
-            <img src="https://ui-avatars.com/api/?name=C&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
+            <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
             <div style="font-size: 13px;">
-                <div style="color: #aaa; font-size: 11px;">Charlotte</div>
+                <div style="color: #aaa; font-size: 11px;">User_8492</div>
                 <div class="typing-dots">
                     <span></span><span></span><span></span>
                 </div>
@@ -211,8 +222,8 @@
             </button>
             
             <button class="btn btn-answer" onclick="showModal()">
-                <div class="btn-icon">📞</div>
-                <div class="btn-text">Answer Call</div>
+                <div class="btn-icon">📹</div>
+                <div class="btn-text">Answer Video Call</div>
             </button>
         </div>
     </div>
@@ -227,13 +238,24 @@
             if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }, 2000);
 
-        // 2. Real-time Device Clock
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('clock').innerText = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
+        // 2. Sound Toggle Function
+        function toggleSound() {
+            const video = document.getElementById('bgVideo');
+            const btn = document.getElementById('soundBtn');
+            if (video.muted) {
+                video.muted = false;
+                btn.innerHTML = '🔊 Sound On';
+                btn.style.background = 'rgba(52, 199, 89, 0.6)';
+                btn.style.borderColor = '#34C759';
+            } else {
+                video.muted = true;
+                btn.innerHTML = '🔇 Tap to Unmute';
+                btn.style.background = 'rgba(0, 0, 0, 0.6)';
+                btn.style.borderColor = '#555';
+            }
+        }
 
-        // 3. Fake Viewers Count (Randomly fluctuates to build trust)
+        // 3. Fake Viewers Count
         let viewers = 43;
         setInterval(() => {
             viewers = viewers + Math.floor(Math.random() * 5) - 2;
@@ -241,8 +263,8 @@
             document.getElementById('viewers').innerText = viewers;
         }, 3500);
 
-        // 4. Fake Countdown Timer (Urgency)
-        let time = 179; // 2 minutes 59 seconds
+        // 4. Fake Countdown Timer
+        let time = 179;
         setInterval(() => {
             if (time <= 0) return;
             time--;
@@ -251,31 +273,22 @@
             document.getElementById('timer').innerText = `0${m}:${s < 10 ? '0' : ''}${s}`;
         }, 1000);
 
-        // 5. Change typing dots to an actual seductive message
+        // 5. Change typing dots to message
         setTimeout(() => {
             const chat = document.querySelector('.chat-popup');
             chat.innerHTML = `
-                <img src="https://ui-avatars.com/api/?name=C&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
+                <img src="https://ui-avatars.com/api/?name=U&background=random&color=fff&size=32" style="border-radius:50%; width:28px;">
                 <div style="font-size: 14px;">
-                    <div style="color: #aaa; font-size: 11px;">Charlotte</div>
-                    <div style="color: white; font-weight: bold;">Hurry up and answer! 😈</div>
+                    <div style="color: #aaa; font-size: 11px;">User_8492</div>
+                    <div style="color: white; font-weight: bold;">Click answer to unblur me! 🔥</div>
                 </div>`;
             if(navigator.vibrate) navigator.vibrate(100);
         }, 7000);
 
-        // 6. Show 18+ Modal on Answer Click
+        // 6. Show Modal on Answer
         function showModal() {
             document.getElementById('ageModal').style.display = 'flex';
         }
-
-        // 7. Desktop Exit Intent (Stops them from leaving)
-        let exitIntentShown = false;
-        document.addEventListener("mouseleave", function(e) {
-            if (e.clientY < 0 && !exitIntentShown) {
-                exitIntentShown = true;
-                alert("Wait! Charlotte just sent you a private photo. Answer the call before she leaves!");
-            }
-        });
     </script>
 </body>
 </html>
