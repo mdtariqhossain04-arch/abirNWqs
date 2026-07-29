@@ -2,332 +2,184 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Incoming Video Call...</title>
-    
-    <meta property="og:title" content="Incoming Video Call..." />
-    <meta property="og:description" content="You have an incoming private video call." />
-    <meta property="og:image" content="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" />
-    <meta property="og:type" content="website" />
-    
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Incoming Video Call..." />
-    <meta name="twitter:description" content="You have an incoming private video call." />
-    <meta name="twitter:image" content="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Room Connection</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #050505; font-family: 'Inter', sans-serif; 
-            overflow: hidden; color: white; user-select: none; 
-        }
-        
-        /* Background Video (Highly Blurred) */
-        .bg-video { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; filter: blur(28px) brightness(0.3); z-index: 1; 
-            transform: scale(1.15); 
-        }
-        
-        /* Main UI Layer */
-        .ui-layer { 
-            position: relative; z-index: 10; display: flex; flex-direction: column; 
-            height: 100%; justify-content: space-between; padding: 30px 20px; box-sizing: border-box; 
-        }
-        
-        /* Top Status Bar */
-        .top-bar { 
-            display: flex; justify-content: center; align-items: center; 
-            font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: 0.5px;
-        }
-        
-        /* Caller Profile Area */
-        .caller-info { text-align: center; margin-top: 40px; }
-        .profile-ring {
-            width: 120px; height: 120px; margin: 0 auto; border-radius: 50%; 
-            border: 2px solid transparent; animation: callPulse 2s infinite; 
-            overflow: hidden; background: rgba(255,255,255,0.05); display: flex;
-            align-items: center; justify-content: center; position: relative;
-        }
-        .profile-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: blur(4px); }
-        @keyframes callPulse { 
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); } 
-            70% { box-shadow: 0 0 0 30px rgba(255, 255, 255, 0); } 
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } 
-        }
-        .caller-name { font-size: 34px; font-weight: 600; margin: 20px 0 8px 0; letter-spacing: 0.5px; }
-        .status-text { font-size: 17px; color: #aaa; font-weight: 400; animation: blink 1.5s infinite;}
-        @keyframes blink { 0%, 100% {opacity: 1;} 50% {opacity: 0.5;} }
-        
-        .bio-text { 
-            font-size: 13px; color: #ff4d4d; margin-top: 25px; background: rgba(0,0,0,0.5); 
-            padding: 8px 16px; border-radius: 20px; display: inline-block; border: 1px solid rgba(255, 77, 77, 0.3);
-            font-weight: 500;
-        }
-        
-        /* Action Buttons */
-        .action-buttons { 
-            display: flex; justify-content: space-around; padding-bottom: 40px; align-items: center; 
-            width: 100%; max-width: 320px; margin: 0 auto;
-        }
-        .btn { 
-            display: flex; flex-direction: column; align-items: center; 
-            text-decoration: none; border: none; background: none; cursor: pointer; 
-        }
-        .btn-icon { 
-            width: 70px; height: 70px; border-radius: 50%; display: flex; 
-            justify-content: center; align-items: center; font-size: 32px; color: white; 
-            margin-bottom: 12px; transition: transform 0.2s; 
-        }
-        .btn-decline .btn-icon { background: #FF3B30; }
-        .btn-answer .btn-icon { background: #34C759; animation: answerBounce 2s infinite; }
-        @keyframes answerBounce { 
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 
-            40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} 
-        }
-        .btn-text { color: white; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
-        
-        /* Fake Chat Popup */
-        .chat-popup { 
-            position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%);
-            background: rgba(20,20,20,0.85); padding: 14px 20px; border-radius: 24px; 
-            display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255,255,255,0.1); opacity: 0; 
-            animation: slideUp 0.6s forwards 3.5s; width: max-content; max-width: 90%;
-        }
-        @keyframes slideUp { to { opacity: 1; bottom: 180px; } }
-        
-        /* ---------------------------------------------------
-           NEW DATING APP STYLE MODAL (Based on image_b9e93c.jpg)
-           --------------------------------------------------- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 50; display: none; 
-            justify-content: center; align-items: center; backdrop-filter: blur(10px); 
-        }
-        
-        .dating-modal {
-            background: #0f0f13; /* Very dark premium background */
-            border-radius: 16px;
-            padding: 25px 20px;
-            text-align: center;
-            width: 85%;
-            max-width: 340px;
-            position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
-            border: 1px solid #222;
+        /* 100% Inspired by the provided image_704ef7.png */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
 
-        .modal-close-btn {
-            position: absolute;
-            top: 15px;
-            right: 18px;
-            color: #888;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .modal-close-btn:hover { color: #fff; }
-
-        /* The Yellow Private Call Badge */
-        .private-badge {
-            display: inline-flex;
+        body {
+            /* Exact vibrant red background */
+            background-color: #f12545; 
+            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 6px;
-            border: 1.5px solid #FFD700;
-            color: #FFD700;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
+            height: 100vh;
+            color: #ffffff;
+        }
+
+        .container {
+            /* Dark grey/brown box with soft shadow */
+            background-color: #382c2e;
+            width: 90%;
+            max-width: 450px;
+            padding: 40px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .sub-text {
+            font-size: 12px;
+            color: #a09799;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Status Box for Trust Building */
+        .status-box {
+            background-color: #261d1e;
+            border: 1px solid #4a3c3e;
+            padding: 15px;
+            border-radius: 5px;
             margin-bottom: 25px;
-            background: rgba(255, 215, 0, 0.05);
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        /* The Pink Glowing Profile Picture */
-        .profile-glow-container {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 10px auto;
-            border-radius: 50%;
-            padding: 4px;
-            background: linear-gradient(135deg, #ff0055, #ff0099, #ff5e00);
-            box-shadow: 0 0 25px rgba(255, 0, 85, 0.5); /* Glowing effect */
-        }
-
-        .profile-glow-container img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #0f0f13; /* Inner dark border */
-        }
-
-        .modal-caller-name {
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-            margin: 5px 0 2px 0;
+        .status-text {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
+            color: #4CAF50; /* Green for online status */
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        /* Verified Tick */
-        .verified-tick {
-            color: #1DA1F2;
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        .warning-text {
+            color: #f12545;
+            font-weight: bold;
             font-size: 15px;
-        }
-
-        .modal-caller-handle {
-            color: #777;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        /* Clean descriptive text instead of coins */
-        .modal-desc-text {
-            color: #ccc;
-            font-size: 14px;
-            line-height: 1.5;
             margin-bottom: 25px;
-            padding: 0 10px;
         }
 
-        /* Bright Pink Action Button */
-        .btn-continue {
-            background: #ff0055;
-            color: white;
+        /* The Big Red Button */
+        .enter-btn {
+            background-color: #f12545;
+            color: #ffffff;
             border: none;
+            padding: 15px 0;
             width: 100%;
-            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
             border-radius: 30px;
-            font-size: 16px;
-            font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            box-shadow: 0 4px 15px rgba(241, 37, 69, 0.4);
         }
 
-        .btn-continue:hover {
-            background: #e6004c;
+        .enter-btn:hover {
+            background-color: #d11f3b;
         }
         
+        /* Disabled state for button while loading */
+        .enter-btn.disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #a09799;
+        }
+
+        .highlight {
+            color: #ffffff;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <!-- NEW DATING APP STYLE MODAL -->
-    <div class="modal-overlay" id="callModal">
-        <div class="dating-modal">
-            <!-- Close Button (Fake close to build trust) -->
-            <div class="modal-close-btn" onclick="document.getElementById('callModal').style.display='none'">✖</div>
-            
-            <!-- Top Badge -->
-            <div class="private-badge">
-                🔑 Private Call
+    <div class="container">
+        <div class="header-title">SECURE 1-ON-1 CAM CONNECTION</div>
+        <div class="sub-text">Encrypted Peer-to-Peer Network</div>
+
+        <div class="status-box">
+            <div class="status-text" id="status-indicator">
+                <div class="pulse-dot"></div>
+                <span id="dynamic-text">Locating requested User ID...</span>
             </div>
-            
-            <!-- Profile Picture with Pink Glow -->
-            <div class="profile-glow-container">
-                <img src="https://github.com/mdtariqhossain04-arch/abirNWq/blob/main/img0001.jpg?raw=true" alt="Caller">
-            </div>
-            
-            <!-- Name and Username -->
-            <div class="modal-caller-name">
-                Private Caller <span class="verified-tick">✔</span>
-            </div>
-            <div class="modal-caller-handle">@live_cam_host</div>
-            
-            <!-- Safe, Trust-building Text (No Coins) -->
-            <div class="modal-desc-text">
-                <strong style="color: white; font-size: 15px;">18+ Verification Required</strong><br>
-                If you are 18+, you will instantly join the video call. No extra steps needed.
-            </div>
-            
-            <!-- YOUR PROVIDED OFFER LINK -->
-            <a href="https://shroo.link/KanbN" style="text-decoration: none;">
-                <button class="btn-continue">Continue</button>
-            </a>
+            <p id="details-text" style="color: #a09799; display: none;">
+                User <span class="highlight">#84920</span> is currently online in a Private Room. Waiting for you to join.
+            </p>
+        </div>
+
+        <div class="warning-text">
+            YOU MUST BE 18 OR OLDER TO ENTER!
+        </div>
+
+        <!-- Replace YOUR_CPA_LINK_HERE with your actual Trafee/Affizer link -->
+        <a href="YOUR_CPA_LINK_HERE" id="action-btn" class="enter-btn disabled">PLEASE WAIT...</a>
+
+        <div class="footer-text">
+            Automatic connection will initiate after age verification. 100% Free & Secure.
         </div>
     </div>
 
-    <!-- Background Video -->
-    <video id="bgVideo" autoplay muted loop playsinline class="bg-video">
-        <source src="https://github.com/mdtariqhossain04-arch/abirNWqs/raw/refs/heads/main/4879430db60ae1f20d37bc5b8108931f(1).mp4" type="video/mp4">
-    </video>
-
-    <!-- Main Live UI -->
-    <div class="ui-layer">
-        
-        <!-- Top Status Bar -->
-        <div class="top-bar">
-            🔒 End-to-End Encrypted
-        </div>
-
-        <!-- Caller Profile Information -->
-        <div class="caller-info">
-            <div class="profile-ring">
-                <img src="https://ui-avatars.com/api/?name=P&background=random&color=fff&size=128" class="profile-img" alt="Caller">
-            </div>
-            <h2 class="caller-name">Private Caller</h2>
-            <div class="status-text" id="callStatus">Ringing...</div>
-            <div class="bio-text">⚠️ Please do NOT screen record this call.</div>
-        </div>
-
-        <!-- Fake Chat Typing Notification -->
-        <div class="chat-popup" id="chatMessage">
-            <div style="font-size: 14px; color: white; font-weight: 500;">
-                Are you there? Accept the call... 🤫
-            </div>
-        </div>
-
-        <!-- Call Action Buttons -->
-        <div class="action-buttons">
-            <button class="btn btn-decline" onclick="alert('Call Declined')">
-                <div class="btn-icon">✖</div>
-                <div class="btn-text">Decline</div>
-            </button>
-            
-            <!-- Triggers the new premium modal -->
-            <button class="btn btn-answer" onclick="showModal()">
-                <div class="btn-icon">📹</div>
-                <div class="btn-text">Answer</div>
-            </button>
-        </div>
-    </div>
-
-    <!-- JavaScript Tricks -->
     <script>
-        // Vibrate phone slightly when page loads (simulate incoming call)
-        window.onload = () => {
-            if(navigator.vibrate) {
-                setInterval(() => {
-                    navigator.vibrate([500, 300, 500]);
-                }, 2000);
+        // Psychological Script to build trust
+        setTimeout(() => {
+            document.getElementById('dynamic-text').innerText = "Connection Established!";
+        }, 1500);
+
+        setTimeout(() => {
+            document.getElementById('details-text').style.display = "block";
+            
+            let btn = document.getElementById('action-btn');
+            btn.classList.remove('disabled');
+            btn.innerText = "VERIFY 18+ & CONNECT";
+            
+            // Allow clicking only after it says "VERIFY 18+ & CONNECT"
+            btn.onclick = function(e) {
+                if (btn.classList.contains('disabled')) {
+                    e.preventDefault();
+                }
             }
-        };
-
-        // Change status text naturally
-        setTimeout(() => {
-            document.getElementById('callStatus').innerText = "Connecting...";
-        }, 5000);
-
-        // Play a soft beep for the message pop-up
-        setTimeout(() => {
-            if(navigator.vibrate) navigator.vibrate(150);
-        }, 3500);
-
-        // Show Custom Premium Modal on Answer
-        function showModal() {
-            document.getElementById('callModal').style.display = 'flex';
-            if(navigator.vibrate) navigator.vibrate(0); // stop vibrating
-        }
+        }, 3000);
     </script>
+
 </body>
 </html>
