@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Room Connection</title>
+    <title>Secure Private Cam</title>
+    
     <style>
-        /* 100% Inspired by the provided image_704ef7.png */
         * {
             margin: 0;
             padding: 0;
@@ -14,22 +14,22 @@
         }
 
         body {
-            /* Exact vibrant red background */
+            /* Vibrant red matching your image */
             background-color: #f12545; 
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             color: #ffffff;
+            padding: 20px;
         }
 
         .container {
-            /* Dark grey/brown box with soft shadow */
             background-color: #382c2e;
-            width: 90%;
+            width: 100%;
             max-width: 450px;
-            padding: 40px 30px;
-            border-radius: 10px;
+            padding: 35px 25px;
+            border-radius: 12px;
             box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.4);
             text-align: center;
         }
@@ -37,7 +37,7 @@
         .header-title {
             font-size: 22px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
             color: #ffffff;
         }
@@ -55,7 +55,7 @@
             border: 1px solid #4a3c3e;
             padding: 15px;
             border-radius: 5px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 14px;
             line-height: 1.6;
         }
@@ -65,7 +65,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            color: #4CAF50; /* Green for online status */
+            color: #4CAF50;
             font-weight: bold;
             margin-bottom: 10px;
         }
@@ -84,11 +84,30 @@
             100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
 
+        /* THE NEW SECURITY ALERT BOX */
+        .security-alert {
+            background: rgba(241, 37, 69, 0.1);
+            border-left: 4px solid #f12545;
+            padding: 12px;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 12px;
+            color: #dcdcdc;
+            line-height: 1.5;
+        }
+
+        .security-alert strong {
+            color: #f12545;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
         .warning-text {
             color: #f12545;
             font-weight: bold;
             font-size: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         /* The Big Red Button */
@@ -98,7 +117,7 @@
             border: none;
             padding: 15px 0;
             width: 100%;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
@@ -112,7 +131,6 @@
             background-color: #d11f3b;
         }
         
-        /* Disabled state for button while loading */
         .enter-btn.disabled {
             background-color: #666;
             cursor: not-allowed;
@@ -121,8 +139,8 @@
 
         .footer-text {
             margin-top: 20px;
-            font-size: 12px;
-            color: #a09799;
+            font-size: 11px;
+            color: #888;
         }
 
         .highlight {
@@ -134,7 +152,7 @@
 <body>
 
     <div class="container">
-        <div class="header-title">SECURE 1-ON-1 CAM CONNECTION</div>
+        <div class="header-title">SECURE 1-ON-1 CAM</div>
         <div class="sub-text">Encrypted Peer-to-Peer Network</div>
 
         <div class="status-box">
@@ -147,12 +165,18 @@
             </p>
         </div>
 
+        <!-- THE PSYCHOLOGICAL TRUST BUILDER -->
+        <div class="security-alert">
+            <strong>⚠️ STRICT PRIVACY POLICY</strong>
+            Screen recording or capturing screenshots of private video calls is strictly prohibited. Any attempt will trigger our security system and result in an automatic IP ban.
+        </div>
+
         <div class="warning-text">
             YOU MUST BE 18 OR OLDER TO ENTER!
         </div>
 
-        <!-- Replace YOUR_CPA_LINK_HERE with your actual Trafee/Affizer link -->
-        <a href="YOUR_CPA_LINK_HERE" id="action-btn" class="enter-btn disabled">PLEASE WAIT...</a>
+        <!-- Your Target CPA Link -->
+        <a href="https://shroo.link/MWLLl" id="action-btn" class="enter-btn disabled">PLEASE WAIT...</a>
 
         <div class="footer-text">
             Automatic connection will initiate after age verification. 100% Free & Secure.
@@ -160,7 +184,7 @@
     </div>
 
     <script>
-        // Psychological Script to build trust
+        // Fake Loading System
         setTimeout(() => {
             document.getElementById('dynamic-text').innerText = "Connection Established!";
         }, 1500);
@@ -172,7 +196,6 @@
             btn.classList.remove('disabled');
             btn.innerText = "VERIFY 18+ & CONNECT";
             
-            // Allow clicking only after it says "VERIFY 18+ & CONNECT"
             btn.onclick = function(e) {
                 if (btn.classList.contains('disabled')) {
                     e.preventDefault();
