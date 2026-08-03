@@ -3,118 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Private Cam - Guest Portal</title>
+    <title>Private Room Access</title>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
         body {
-            background: linear-gradient(rgba(241, 37, 69, 0.9), rgba(43, 34, 36, 0.95)), 
+            background: linear-gradient(rgba(15, 12, 13, 0.88), rgba(241, 37, 69, 0.85)), 
                         url('https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=1000&auto=format&fit=crop') center/cover;
             display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #ffffff; padding: 15px;
         }
+
         .container {
-            background-color: #2b2224; width: 100%; max-width: 480px; padding: 30px 25px;
-            border-radius: 12px; box-shadow: 0px 15px 50px rgba(0, 0, 0, 0.8); text-align: center; border: 1px solid #4a3c3e;
+            background-color: #1c1516; width: 100%; max-width: 440px; padding: 30px 22px;
+            border-radius: 16px; box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.9); text-align: center; border: 1px solid #3d2c2e; position: relative;
         }
-        
-        .top-bar { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #4a3c3e; padding-bottom: 10px; }
-        .live-badge { color: #ff3b3b; animation: blink 1.5s infinite; display: flex; align-items: center; gap: 5px; }
-        .dot { width: 8px; height: 8px; background: #ff3b3b; border-radius: 50%; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .viewer-count { color: #a09799; }
 
-        .header-title { font-size: 26px; font-weight: 800; margin-bottom: 5px; letter-spacing: 0.5px; }
-        .sub-text { font-size: 13px; color: #a09799; margin-bottom: 25px; }
-        
-        /* Steps to anticipate action */
-        .steps-box {
-            background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left;
+        .free-badge {
+            background: #4CAF50; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase;
+            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px;
         }
-        .step-item { font-size: 13px; margin-bottom: 10px; color: #dcdcdc; display: flex; align-items: center; gap: 10px; }
-        .step-item:last-child { margin-bottom: 0; }
-        .step-num { background: #f12545; color: #fff; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 11px; font-weight: bold; flex-shrink: 0; }
 
-        .security-alert { background: rgba(241, 37, 69, 0.1); border-left: 4px solid #f12545; padding: 12px; text-align: left; margin-bottom: 25px; font-size: 12px; color: #dcdcdc; line-height: 1.5; }
-        .security-alert strong { color: #f12545; display: block; margin-bottom: 4px; font-size: 13px; }
-
-        /* Button & Transition */
-        .enter-btn {
-            background-color: #f12545; color: #ffffff; border: none; padding: 16px 0; width: 100%; font-size: 18px; font-weight: bold;
-            border-radius: 30px; cursor: pointer; display: block; transition: all 0.3s; box-shadow: 0 4px 15px rgba(241, 37, 69, 0.4); margin-bottom: 15px;
+        .live-status {
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: #a09799; margin-bottom: 20px;
         }
-        .enter-btn:hover { background-color: #d11f3b; transform: translateY(-2px); }
-        
-        .partner-text { font-size: 11px; color: #888; line-height: 1.4; padding: 0 10px; }
-        .partner-text span { color: #4CAF50; font-weight: bold; }
 
-        /* Loading Overlay (Hidden initially) */
-        #loading-screen {
-            display: none; flex-direction: column; justify-content: center; align-items: center; gap: 15px;
-            padding: 20px 0;
+        .red-dot { width: 9px; height: 9px; background: #ff2a5f; border-radius: 50%; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 42, 95, 0.8); } 70% { box-shadow: 0 0 0 8px rgba(255, 42, 95, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 42, 95, 0); } }
+
+        .header-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; line-height: 1.2; }
+        .sub-text { font-size: 13px; color: #dcdcdc; margin-bottom: 25px; line-height: 1.4; }
+
+        /* QUIZ STEP BOXES */
+        .step-box { display: none; }
+        .step-box.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .question-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #ffebed; }
+
+        .btn-grid { display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
+        .quiz-btn {
+            flex: 1; background: #2f2224; border: 1px solid #54393d; color: #fff; padding: 14px 0; font-size: 16px;
+            font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.2s;
         }
+        .quiz-btn:hover { background: #ff2a5f; border-color: #ff2a5f; }
+
+        /* FINAL CTA BUTTON */
+        .cta-btn {
+            background-color: #ff2a5f; color: #ffffff; border: none; padding: 18px 0; width: 100%; font-size: 18px; font-weight: 800;
+            border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(255, 42, 95, 0.5); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .cta-btn:hover { background-color: #e01b4c; transform: scale(1.02); }
+
+        /* LOADING ANIMATION */
+        .loader-wrapper { padding: 20px 0; }
         .spinner {
-            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #f12545; border-radius: 50%;
-            animation: spin 1s linear infinite;
+            width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #ff2a5f;
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loading-text { font-size: 14px; font-weight: bold; color: #4CAF50; }
-        .loading-sub { font-size: 12px; color: #a09799; }
+
+        .footer-trust { margin-top: 20px; font-size: 11px; color: #7a6b6d; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-content">
-        <div class="top-bar">
-            <span class="live-badge"><div class="dot"></div> LIVE CAM</span>
-            <span class="viewer-count">👁️ 1 Person in lobby</span>
+    <div class="container">
+        <span class="free-badge">🎉 100% Free Access</span>
+        
+        <div class="live-status">
+            <div class="red-dot"></div>
+            <span>User #84920 is online in your region</span>
         </div>
 
-        <div class="header-title">PRIVATE ROOM</div>
-        <div class="sub-text">User #84920 is waiting for your connection.</div>
+        <h1 class="header-title">PRIVATE 1-ON-1 CAM</h1>
+        <p class="sub-text">Quick verification required to enter the private live session.</p>
 
-        <div class="steps-box">
-            <div class="step-item"><div class="step-num">1</div> Click the enter button below.</div>
-            <div class="step-item"><div class="step-num">2</div> Complete the quick 18+ human verification.</div>
-            <div class="step-item"><div class="step-num">3</div> Camera connects automatically.</div>
+        <!-- STEP 1: AGE CHECK -->
+        <div class="step-box active" id="step1">
+            <div class="question-title">Step 1 of 2: Are you 18 years of age or older?</div>
+            <div class="btn-grid">
+                <button class="quiz-btn" onclick="nextStep(2)">YES</button>
+                <button class="quiz-btn" onclick="nextStep(2)">NO</button>
+            </div>
         </div>
 
-        <div class="security-alert">
-            <strong>⚠️ NO SCREENSHOTS ALLOWED</strong>
-            Recording is strictly prohibited. Violators will receive an automatic IP ban.
+        <!-- STEP 2: PRIVACY AGREEMENT -->
+        <div class="step-box" id="step2">
+            <div class="question-title">Step 2 of 2: Do you agree to respect member privacy & abstain from recording?</div>
+            <div class="btn-grid">
+                <button class="quiz-btn" onclick="startMatching()">AGREE & CONTINUE</button>
+            </div>
         </div>
 
-        <button id="action-btn" class="enter-btn">ENTER AS GUEST</button>
+        <!-- STEP 3: FAKE SEARCHING / MATCHING -->
+        <div class="step-box" id="step3">
+            <div class="loader-wrapper">
+                <div class="spinner"></div>
+                <div style="font-size: 14px; font-weight: bold; color: #4CAF50;" id="match-status">Finding available private room...</div>
+                <div style="font-size: 12px; color: #888; margin-top: 5px;">Securing high-speed connection...</div>
+            </div>
+        </div>
 
-        <div class="partner-text">
-            For your privacy, age verification is securely handled by our <span>verified 3rd-party partner</span>. No credit card required.
+        <!-- STEP 4: FINAL REVEAL & DIRECT ACTION -->
+        <div class="step-box" id="step4">
+            <div style="background: rgba(76, 175, 80, 0.15); border: 1px solid #4CAF50; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                <span style="color: #4CAF50; font-weight: bold; font-size: 14px;">✔ Match Found! Private Room Ready.</span>
+            </div>
+            
+            <!-- Replace with your SOI Link -->
+            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cta-btn">START FREE CHAT NOW 💋</a>
+        </div>
+
+        <div class="footer-trust">
+            🔒 NO CREDIT CARD REQUIRED • NO SPAM GUARANTEE
         </div>
     </div>
 
-    <!-- The Transition Logic -->
     <script>
-        const btn = document.getElementById('action-btn');
-        const mainContent = document.getElementById('main-content');
-        
-        btn.addEventListener('click', function() {
-            // Hide normal content, show loading animation inside the box
-            mainContent.innerHTML = `
-                <div id="loading-screen" style="display: flex;">
-                    <div class="spinner"></div>
-                    <div class="loading-text" id="load-msg">Encrypting Connection...</div>
-                    <div class="loading-sub">Please wait while we route you to the verification server.</div>
-                </div>
-            `;
+        function nextStep(stepNum) {
+            document.querySelectorAll('.step-box').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + stepNum).classList.add('active');
+        }
 
-            // Sequence the messages to build trust before redirect
-            setTimeout(() => { document.getElementById('load-msg').innerText = "Securing Channel (50%)..."; }, 1000);
-            setTimeout(() => { document.getElementById('load-msg').innerText = "Anti-Bot Check Passed!"; }, 2200);
-            setTimeout(() => { document.getElementById('load-msg').innerText = "Routing to Partner Portal..."; }, 3500);
+        function startMatching() {
+            nextStep(3);
             
-            // Final Redirect to your CPA Link after 4.5 seconds
             setTimeout(() => {
-                window.location.href = "https://bedjfha.hubss.one/p/uyMfR";
-            }, 4500);
-        });
+                document.getElementById('match-status').innerText = "Connecting to User #84920...";
+            }, 1200);
+
+            setTimeout(() => {
+                nextStep(4);
+            }, 2600);
+        }
     </script>
 
 </body>
