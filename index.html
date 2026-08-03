@@ -3,140 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Room Access</title>
+    <title>Live Cam Dashboard - VIP</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        body {
-            background: linear-gradient(rgba(15, 12, 13, 0.88), rgba(241, 37, 69, 0.85)), 
-                        url('https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=1000&auto=format&fit=crop') center/cover;
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #ffffff; padding: 15px;
+        body { background-color: #0d090a; color: #ffffff; padding-bottom: 70px; }
+
+        /* Top Header */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: rgba(20, 14, 15, 0.95);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #2a1c1e;
+        }
+        .logo { font-size: 18px; font-weight: 900; color: #ff2a5f; letter-spacing: 1px; }
+        .online-count { font-size: 12px; color: #4CAF50; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .dot { width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* Filters */
+        .filters {
+            display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; white-space: nowrap;
+        }
+        .filter-btn {
+            background: #2a1c1e; color: #dcdcdc; border: none; padding: 8px 16px;
+            border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer;
+        }
+        .filter-btn.active { background: #ff2a5f; color: #fff; }
+
+        /* Grid Layout */
+        .cam-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px; padding: 0 20px;
         }
 
-        .container {
-            background-color: #1c1516; width: 100%; max-width: 440px; padding: 30px 22px;
-            border-radius: 16px; box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.9); text-align: center; border: 1px solid #3d2c2e; position: relative;
+        /* Cam Card with BLUR effect */
+        .cam-card {
+            position: relative; border-radius: 12px; overflow: hidden; height: 220px;
+            cursor: pointer; border: 1px solid #2a1c1e; background: #1a1213;
+        }
+        .cam-img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: blur(8px); /* The Mastermind Blur Effect */
+            transition: transform 0.3s;
+        }
+        .cam-card:hover .cam-img { transform: scale(1.05); }
+
+        /* Overlays on Card */
+        .live-badge {
+            position: absolute; top: 10px; left: 10px; background: #ff2a5f; color: #fff;
+            font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px;
+        }
+        .card-info {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 10px 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+        .user-name { font-size: 14px; font-weight: bold; margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+        .user-name span { color: #4CAF50; font-size: 16px; }
+        .cam-type { font-size: 11px; color: #a09799; }
+        
+        .play-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); opacity: 0.8;
         }
 
-        .free-badge {
-            background: #4CAF50; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase;
-            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px;
+        /* Bottom App Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; background: #140e0f;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            border-top: 1px solid #2a1c1e; z-index: 100;
         }
+        .nav-item { text-align: center; color: #a09799; font-size: 20px; cursor: pointer; }
+        .nav-item.active { color: #ff2a5f; }
+        .nav-text { font-size: 10px; display: block; margin-top: 3px; font-weight: bold; }
 
-        .live-status {
-            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: #a09799; margin-bottom: 20px;
+        /* Action Modal (Hidden by default) */
+        #action-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 200;
+            justify-content: center; align-items: center; padding: 20px;
         }
-
-        .red-dot { width: 9px; height: 9px; background: #ff2a5f; border-radius: 50%; animation: pulse 1.2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 42, 95, 0.8); } 70% { box-shadow: 0 0 0 8px rgba(255, 42, 95, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 42, 95, 0); } }
-
-        .header-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; line-height: 1.2; }
-        .sub-text { font-size: 13px; color: #dcdcdc; margin-bottom: 25px; line-height: 1.4; }
-
-        /* QUIZ STEP BOXES */
-        .step-box { display: none; }
-        .step-box.active { display: block; animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-        .question-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #ffebed; }
-
-        .btn-grid { display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
-        .quiz-btn {
-            flex: 1; background: #2f2224; border: 1px solid #54393d; color: #fff; padding: 14px 0; font-size: 16px;
-            font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+        .modal-content {
+            background: #1c1516; width: 100%; max-width: 320px; padding: 25px;
+            border-radius: 16px; text-align: center; border: 1px solid #3d2c2e;
         }
-        .quiz-btn:hover { background: #ff2a5f; border-color: #ff2a5f; }
-
-        /* FINAL CTA BUTTON */
-        .cta-btn {
-            background-color: #ff2a5f; color: #ffffff; border: none; padding: 18px 0; width: 100%; font-size: 18px; font-weight: 800;
-            border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s;
-            box-shadow: 0 6px 20px rgba(255, 42, 95, 0.5); text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .cta-btn:hover { background-color: #e01b4c; transform: scale(1.02); }
-
-        /* LOADING ANIMATION */
-        .loader-wrapper { padding: 20px 0; }
         .spinner {
-            width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #ff2a5f;
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+            width: 40px; height: 40px; border: 3px solid rgba(255,42,95,0.2); border-top: 3px solid #ff2a5f;
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .footer-trust { margin-top: 20px; font-size: 11px; color: #7a6b6d; font-weight: 600; }
+        
+        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .modal-text { font-size: 13px; color: #a09799; margin-bottom: 20px; line-height: 1.4; }
+        
+        .cta-btn {
+            background: #ff2a5f; color: #fff; text-decoration: none; display: block;
+            padding: 14px; border-radius: 25px; font-weight: bold; font-size: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <span class="free-badge">🎉 100% Free Access</span>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">SecretCams</div>
+        <div class="online-count"><div class="dot"></div> 3,420 Online</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active">All Live</button>
+        <button class="filter-btn">Webcam</button>
+        <button class="filter-btn">Private Call</button>
+        <button class="filter-btn">Nearby</button>
+    </div>
+
+    <!-- The Blurred Grid -->
+    <div class="cam-grid">
         
-        <div class="live-status">
-            <div class="red-dot"></div>
-            <span>User #84920 is online in your region</span>
-        </div>
-
-        <h1 class="header-title">PRIVATE 1-ON-1 CAM</h1>
-        <p class="sub-text">Quick verification required to enter the private live session.</p>
-
-        <!-- STEP 1: AGE CHECK -->
-        <div class="step-box active" id="step1">
-            <div class="question-title">Step 1 of 2: Are you 18 years of age or older?</div>
-            <div class="btn-grid">
-                <button class="quiz-btn" onclick="nextStep(2)">YES</button>
-                <button class="quiz-btn" onclick="nextStep(2)">NO</button>
+        <!-- Card 1 -->
+        <div class="cam-card" onclick="openModal('Connecting to Private Cam...')">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" class="cam-img" alt="cam">
+            <div class="live-badge">🔴 LIVE</div>
+            <div class="play-icon">▶️</div>
+            <div class="card-info">
+                <div class="user-name">Guest_892 <span>✓</span></div>
+                <div class="cam-type">Webcam • 1.2k watching</div>
             </div>
         </div>
 
-        <!-- STEP 2: PRIVACY AGREEMENT -->
-        <div class="step-box" id="step2">
-            <div class="question-title">Step 2 of 2: Do you agree to respect member privacy & abstain from recording?</div>
-            <div class="btn-grid">
-                <button class="quiz-btn" onclick="startMatching()">AGREE & CONTINUE</button>
+        <!-- Card 2 -->
+        <div class="cam-card" onclick="openModal('Requesting Video Call...')">
+            <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=80" class="cam-img" alt="cam">
+            <div class="live-badge" style="background:#4CAF50;">📞 CALL ME</div>
+            <div class="play-icon">📹</div>
+            <div class="card-info">
+                <div class="user-name">User_401 <span>✓</span></div>
+                <div class="cam-type">Private Video Call</div>
             </div>
         </div>
 
-        <!-- STEP 3: FAKE SEARCHING / MATCHING -->
-        <div class="step-box" id="step3">
-            <div class="loader-wrapper">
-                <div class="spinner"></div>
-                <div style="font-size: 14px; font-weight: bold; color: #4CAF50;" id="match-status">Finding available private room...</div>
-                <div style="font-size: 12px; color: #888; margin-top: 5px;">Securing high-speed connection...</div>
+        <!-- Card 3 -->
+        <div class="cam-card" onclick="openModal('Joining Live Stream...')">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=80" class="cam-img" alt="cam">
+            <div class="live-badge">🔴 LIVE</div>
+            <div class="play-icon">▶️</div>
+            <div class="card-info">
+                <div class="user-name">Sweet_X <span>✓</span></div>
+                <div class="cam-type">Webcam • 3.5k watching</div>
+            </div>
+        </div>
+        
+        <!-- Card 4 -->
+        <div class="cam-card" onclick="openModal('Connecting to Voice Call...')">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80" class="cam-img" alt="cam">
+            <div class="live-badge" style="background:#2196F3;">🎙️ AUDIO</div>
+            <div class="play-icon">📞</div>
+            <div class="card-info">
+                <div class="user-name">Nearby_99 <span>✓</span></div>
+                <div class="cam-type">Voice Call Ready</div>
             </div>
         </div>
 
-        <!-- STEP 4: FINAL REVEAL & DIRECT ACTION -->
-        <div class="step-box" id="step4">
-            <div style="background: rgba(76, 175, 80, 0.15); border: 1px solid #4CAF50; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <span style="color: #4CAF50; font-weight: bold; font-size: 14px;">✔ Match Found! Private Room Ready.</span>
-            </div>
-            
-            <!-- Replace with your SOI Link -->
-            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cta-btn">START FREE CHAT NOW 💋</a>
-        </div>
+    </div>
 
-        <div class="footer-trust">
-            🔒 NO CREDIT CARD REQUIRED • NO SPAM GUARANTEE
+    <!-- Bottom App Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">📺 <span class="nav-text">Live</span></div>
+        <div class="nav-item">💬 <span class="nav-text">Messages</span></div>
+        <div class="nav-item">🔔 <span class="nav-text">Alerts</span></div>
+        <div class="nav-item">👤 <span class="nav-text">Profile</span></div>
+    </div>
+
+    <!-- Action Modal for CPA Redirect -->
+    <div id="action-modal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <div class="modal-title" id="modal-title-text">Connecting...</div>
+            <div class="modal-text">Guest preview limited. Create a 100% FREE account to unblur the video and join the call.</div>
+            <!-- Your CPA LINK Here -->
+            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cta-btn">UNBLUR & JOIN FREE</a>
         </div>
     </div>
 
     <script>
-        function nextStep(stepNum) {
-            document.querySelectorAll('.step-box').forEach(el => el.classList.remove('active'));
-            document.getElementById('step' + stepNum).classList.add('active');
-        }
-
-        function startMatching() {
-            nextStep(3);
+        function openModal(actionText) {
+            const modal = document.getElementById('action-modal');
+            const titleText = document.getElementById('modal-title-text');
             
-            setTimeout(() => {
-                document.getElementById('match-status').innerText = "Connecting to User #84920...";
-            }, 1200);
+            modal.style.display = 'flex';
+            titleText.innerText = actionText;
 
-            setTimeout(() => {
-                nextStep(4);
-            }, 2600);
+            // Optional: Auto redirect after 5 seconds if they don't click the button
+            // setTimeout(() => {
+            //     window.location.href = "https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844";
+            // }, 5000);
         }
     </script>
 
