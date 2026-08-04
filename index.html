@@ -3,88 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP Connect - Live</title>
+    <title>Live Connect - Guest Access</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
         
-        body { background-color: #050304; color: #ffffff; overflow-x: hidden; }
+        body { background-color: #070405; color: #ffffff; overflow-x: hidden; }
+
+        /* --- AUTO GUEST NOTIFICATION (TOAST) --- */
+        .toast-notification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 230, 118, 0.95); color: #000; padding: 12px 20px;
+            border-radius: 30px; font-weight: bold; font-size: 13px; z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.4); display: flex; align-items: center; gap: 8px;
+            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 90%; max-width: 350px;
+        }
+        .toast-notification.show { top: 20px; }
 
         /* --- DASHBOARD UI --- */
         .dashboard { padding-bottom: 80px; transition: filter 0.3s; }
-        .dashboard.blurred { filter: blur(10px); pointer-events: none; }
+        .dashboard.blurred { filter: blur(12px); pointer-events: none; }
 
         .header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(10, 6, 8, 0.95);
-            position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #1f1416;
+            padding: 15px 20px; background: rgba(15, 10, 11, 0.95);
+            position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #2a1c1e;
         }
-        .logo { font-size: 20px; font-weight: 900; color: #ff2a5f; letter-spacing: 0.5px; }
-        .online-count { font-size: 12px; color: #00e676; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: #00e676; border-radius: 50%; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        /* GUEST PROFILE BAR */
+        .guest-profile-bar {
+            background: #170f12; padding: 10px 20px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #2a1c1e; font-size: 12px;
+        }
+        .guest-id-display { color: #ff2a5f; font-weight: bold; font-size: 14px; }
+        .guest-status { background: rgba(255, 255, 255, 0.1); padding: 4px 10px; border-radius: 12px; color: #aaa; }
 
-        .filters { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; white-space: nowrap; }
+        .filters { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
         .filter-btn { background: #1f1416; color: #aaa; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; }
         .filter-btn.active { background: #ff2a5f; color: #fff; }
 
-        .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 0 15px; }
-        .cam-card { position: relative; border-radius: 14px; overflow: hidden; height: 230px; cursor: pointer; background: #110b0d; }
-        .cam-img { width: 100%; height: 100%; object-fit: cover; filter: blur(8px); transform: scale(1.1); transition: transform 0.4s; }
+        /* GRID FOR 50+ USERS */
+        .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 0 15px; }
+        .cam-card { position: relative; border-radius: 14px; overflow: hidden; height: 210px; cursor: pointer; background: #110b0d; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .cam-img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px); transform: scale(1.1); transition: transform 0.4s; }
         .cam-card:hover .cam-img { transform: scale(1.15); }
         
         .badge-live { position: absolute; top: 10px; left: 10px; background: #ff2a5f; color: #fff; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; }
         .badge-call { position: absolute; top: 10px; left: 10px; background: #00e676; color: #000; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; }
         
-        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; background: rgba(0,0,0,0.6); padding: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
+        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 10px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.95) 80%); }
-        .user-name { font-size: 15px; font-weight: bold; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; color: #fff; }
-        .user-name span { color: #00e676; font-size: 14px; }
+        .user-name { font-size: 14px; font-weight: bold; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; color: #fff; }
+        .user-name span { color: #00e676; font-size: 13px; }
         .cam-type { font-size: 11px; color: #999; }
 
-        /* --- FULL SCREEN CALL UI (INCOMING & OUTGOING) --- */
+        /* --- FULL SCREEN CALL UI --- */
         .call-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
-            background: rgba(10, 6, 8, 0.95); backdrop-filter: blur(20px);
+            background: rgba(10, 6, 8, 0.95); backdrop-filter: blur(25px);
             display: none; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 20px;
         }
         
         .caller-info { text-align: center; margin-top: 40px; }
         .caller-avatar-wrapper { position: relative; width: 130px; height: 130px; margin: 0 auto 20px; }
-        .caller-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #ff2a5f; z-index: 2; position: relative; filter: blur(3px); }
+        .caller-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #ff2a5f; z-index: 2; position: relative; filter: blur(4px); }
         .pulse-ring {
             position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px;
             border: 2px solid #00e676; border-radius: 50%; animation: pulse-ring 1.5s infinite; z-index: 1;
         }
         @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
         
-        .caller-id-large { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
-        .call-status { font-size: 15px; color: #00e676; font-weight: 600; letter-spacing: 1px; }
+        .caller-id-large { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+        .call-status { font-size: 14px; color: #00e676; font-weight: 600; letter-spacing: 1px; }
 
-        .call-actions { display: flex; gap: 30px; width: 100%; max-width: 300px; justify-content: center; margin-bottom: 30px; }
-        .action-btn { width: 75px; height: 75px; border-radius: 50%; border: none; font-size: 30px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .call-actions { display: flex; gap: 30px; width: 100%; max-width: 300px; justify-content: center; margin-bottom: 40px; }
+        .action-btn { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 28px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .btn-decline { background: #ff3b30; color: #fff; }
         .btn-accept { background: #00e676; color: #fff; animation: bounce 1s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        /* --- 18+ MASTERMIND VERIFICATION MODAL --- */
+        /* --- THE ULTIMATE GUEST BLOCKER MODAL --- */
         .verification-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 300;
-            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; padding: 20px;
+            background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; padding: 20px;
         }
         .modal-box {
-            background: #170f12; width: 100%; max-width: 340px; padding: 30px 25px;
-            border-radius: 20px; text-align: center; border: 1px solid #362227; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            background: #170f12; width: 100%; max-width: 350px; padding: 35px 25px;
+            border-radius: 24px; text-align: center; border: 1px solid #ff2a5f; box-shadow: 0 20px 60px rgba(255, 42, 95, 0.2);
+            position: relative; overflow: hidden;
         }
-        .warning-icon { font-size: 45px; margin-bottom: 10px; }
-        .modal-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 10px; }
-        .modal-desc { font-size: 14px; color: #b3b3b3; line-height: 1.5; margin-bottom: 25px; }
+        .guest-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #ff2a5f; color: #fff; font-size: 10px; font-weight: bold; padding: 4px 15px; border-radius: 0 0 10px 10px; }
+        .warning-icon { font-size: 50px; margin-bottom: 15px; }
+        .modal-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 12px; }
+        .modal-desc { font-size: 13.5px; color: #b3b3b3; line-height: 1.6; margin-bottom: 25px; }
         
         .cpa-btn {
-            background: #ff2a5f; color: #fff; text-decoration: none; display: block;
+            background: #00e676; color: #000; text-decoration: none; display: block;
             padding: 16px; border-radius: 30px; font-weight: 900; font-size: 16px; text-transform: uppercase;
-            box-shadow: 0 8px 20px rgba(255, 42, 95, 0.4); transition: transform 0.2s;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4); transition: transform 0.2s;
         }
         .cpa-btn:active { transform: scale(0.95); }
 
@@ -92,23 +109,36 @@
 </head>
 <body>
 
+    <!-- AUTO GUEST NOTIFICATION -->
+    <div class="toast-notification" id="toast">
+        <span>✅</span> <span id="toast-text">Guest account created successfully!</span>
+    </div>
+
     <!-- MAIN DASHBOARD -->
     <div class="dashboard" id="dashboard">
         <div class="header">
-            <div class="logo">PrivateConnect</div>
-            <div class="online-count"><div class="dot"></div> 5,291 Online</div>
+            <div style="font-size: 20px; font-weight: 900; color: #ff2a5f;">PrivateConnect</div>
+            <div style="font-size: 12px; color: #00e676; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                <div style="width: 8px; height: 8px; background: #00e676; border-radius: 50%; animation: blink 1.5s infinite;"></div> 7,492 Online
+            </div>
+        </div>
+
+        <div class="guest-profile-bar">
+            <div>Profile: <span class="guest-id-display" id="my-guest-id">Loading...</span></div>
+            <div class="guest-status">Status: Unverified Guest</div>
         </div>
 
         <div class="filters">
-            <button class="filter-btn active">All Users</button>
-            <button class="filter-btn">Webcam</button>
+            <button class="filter-btn active">Live Now</button>
+            <button class="filter-btn">Nearby (14)</button>
             <button class="filter-btn">Video Call</button>
         </div>
 
+        <!-- 50+ Users Grid -->
         <div class="cam-grid" id="grid"></div>
     </div>
 
-    <!-- FULL SCREEN CALL UI -->
+    <!-- CALL SCREEN -->
     <div class="call-screen" id="call-screen">
         <div class="caller-info">
             <div class="caller-avatar-wrapper">
@@ -118,28 +148,46 @@
             <div class="caller-id-large" id="caller-name">User_0000</div>
             <div class="call-status" id="call-status-text">INCOMING VIDEO CALL...</div>
         </div>
-
         <div class="call-actions" id="call-actions">
             <button class="action-btn btn-decline" onclick="declineCall()">✖</button>
             <button class="action-btn btn-accept" onclick="acceptCall()">📞</button>
         </div>
     </div>
 
-    <!-- THE 18+ VERIFICATION BLOCKER -->
+    <!-- THE MASTERMIND 18+ BLOCKER -->
     <div class="verification-modal" id="verification-modal">
         <div class="modal-box">
+            <div class="guest-badge" id="modal-guest-id">GUEST_ID</div>
             <div class="warning-icon">🔞</div>
-            <div class="modal-title">Age Verification</div>
-            <div class="modal-desc">Call interrupted! You must verify that you are 18 years or older to access private live calls. <br><br><span style="color:#00e676; font-weight:bold;">100% Free • No Charges</span></div>
+            <div class="modal-title">Age Verification Required</div>
+            <div class="modal-desc">
+                Your call cannot be connected. You are currently using a <b>Guest Account</b>. <br><br>
+                To accept or make private calls, you must verify you are 18+ years old. <br>
+                <span style="color:#00e676; font-weight:bold; display:block; margin-top:10px;">100% Free Verification</span>
+            </div>
             
-            <!-- YOUR CPA LINK -->
-            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cpa-btn">I AM 18+ CONTINUE</a>
+            <!-- AFFIZER CPA LINK -->
+            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cpa-btn">VERIFY I AM 18+ NOW</a>
         </div>
     </div>
 
     <script>
-        // Data Setup
-        const images = [
+        // --- 1. GUEST ACCOUNT GENERATOR ---
+        const myGuestID = "Guest_" + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('my-guest-id').innerText = myGuestID;
+        document.getElementById('modal-guest-id').innerText = myGuestID.toUpperCase();
+
+        // Show Welcome Toast Notification
+        setTimeout(() => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = `Auto-login complete: ${myGuestID}`;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
+        }, 1000);
+
+
+        // --- 2. 50+ USERS GENERATOR ---
+        const baseImages = [
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/post94873717708903160IMG_2631.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/photo_2026-02-01_19-40-54.jpg?raw=true",
@@ -149,53 +197,61 @@
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafc930da7d6.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafbe3fc1960.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb9e5a7fc5.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb12fc3117.jpeg?raw=true"
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb12fc3117.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf934c26dee.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf445819aa1.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf376edf756.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf17e56f793.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faeff2b47920.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faee27525158.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images4.jpg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images%201.jpg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/ZUQYQVFNR3-thumb.jpg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/Z5CJD4WFFK.jpg?raw=true"
         ];
 
         let usersList = [];
-
-        // 1. Generate Dashboard Grid
         const grid = document.getElementById('grid');
         
-        images.forEach((img, i) => {
-            const uid = "User_" + Math.floor(10000 + Math.random() * 90000);
-            const isCall = Math.random() > 0.5; // 50% chance Live, 50% Call Me
+        // Loop 60 times to create a massive wall of content
+        for (let i = 0; i < 60; i++) {
+            // Pick a random image from the base pool
+            const randomImg = baseImages[Math.floor(Math.random() * baseImages.length)];
+            const uid = "User_" + Math.floor(10000 + Math.random() * 89999);
+            const isCall = Math.random() > 0.6; // 40% chance it's a direct call button
             
-            usersList.push({ id: uid, img: img });
+            usersList.push({ id: uid, img: randomImg });
 
             const card = `
-                <div class="cam-card" onclick="initiateCall('${uid}', '${img}')">
-                    <img src="${img}" class="cam-img">
-                    <div class="${isCall ? 'badge-call' : 'badge-live'}">${isCall ? '📞 CALL ME' : '🔴 LIVE'}</div>
+                <div class="cam-card" onclick="initiateCall('${uid}', '${randomImg}')">
+                    <img src="${randomImg}" class="cam-img" loading="lazy">
+                    <div class="${isCall ? 'badge-call' : 'badge-live'}">${isCall ? '📞 CALL READY' : '🔴 LIVE'}</div>
                     <div class="play-btn">${isCall ? '📞' : '▶️'}</div>
                     <div class="card-info">
                         <div class="user-name">${uid} <span>✔</span></div>
-                        <div class="cam-type">${isCall ? 'Private Video Call' : 'Webcam • Live now'}</div>
+                        <div class="cam-type">${isCall ? 'Accepting Calls' : 'Private Webcam'}</div>
                     </div>
                 </div>
             `;
             grid.insertAdjacentHTML('beforeend', card);
-        });
+        }
 
-        // 2. Call Logic Elements
+        // --- 3. CALL & BLOCKER LOGIC ---
         const callScreen = document.getElementById('call-screen');
         const dash = document.getElementById('dashboard');
         const vModal = document.getElementById('verification-modal');
         const statusText = document.getElementById('call-status-text');
         const actionsDiv = document.getElementById('call-actions');
-        
-        let audioCtx;
-        let ringInterval;
+        let audioCtx, ringInterval;
 
         function playRingtone() {
             try {
                 if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if(audioCtx.state === 'suspended') audioCtx.resume();
-                
                 function beep() {
                     let osc = audioCtx.createOscillator();
                     let gain = audioCtx.createGain();
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(480, audioCtx.currentTime);
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                     osc.connect(gain); gain.connect(audioCtx.destination);
@@ -204,15 +260,12 @@
                 beep();
                 ringInterval = setInterval(beep, 1500);
                 if(navigator.vibrate) navigator.vibrate([400, 200, 400]);
-            } catch(e) { console.log('Audio wait'); }
+            } catch(e) {}
         }
-
         function stopRingtone() { clearInterval(ringInterval); }
 
-        // Trigger System Incoming Call
         function triggerIncomingCall() {
             if(callScreen.style.display === 'flex' || vModal.style.display === 'flex') return;
-            
             const randomUser = usersList[Math.floor(Math.random() * usersList.length)];
             
             document.getElementById('caller-img').src = randomUser.img;
@@ -224,72 +277,58 @@
             callScreen.style.display = 'flex';
             actionsDiv.style.display = 'flex';
             document.getElementById('call-pulse').style.display = 'block';
-
             playRingtone();
         }
 
-        // Trigger User Initiated Call (Call Back)
         function initiateCall(uid, img) {
             document.getElementById('caller-img').src = img;
             document.getElementById('caller-name').innerText = uid;
             
             dash.classList.add('blurred');
             callScreen.style.display = 'flex';
-            actionsDiv.style.display = 'none'; // Hide accept/decline buttons
-            
+            actionsDiv.style.display = 'none'; 
             statusText.innerText = "Dialing securely...";
             statusText.style.color = "#ccc";
             document.getElementById('call-pulse').style.display = 'none';
 
-            // Wait 2.5 seconds like a real call, then show verification!
-            setTimeout(() => {
-                showVerification();
-            }, 2500);
+            // Wait 2 seconds, show verification!
+            setTimeout(() => { showVerification(); }, 2000);
         }
 
-        // Accept the incoming call
         function acceptCall() {
             stopRingtone();
             actionsDiv.style.display = 'none';
             statusText.innerText = "Connecting...";
             statusText.style.color = "#fff";
-            
-            // Wait 2 seconds, then hit them with the block!
-            setTimeout(() => {
-                showVerification();
-            }, 2000);
+            // Wait 1.5 seconds, show verification!
+            setTimeout(() => { showVerification(); }, 1500);
         }
 
-        // Decline incoming call
         function declineCall() {
             stopRingtone();
             statusText.innerText = "Call Declined.";
             statusText.style.color = "#ff3b30";
-            
             setTimeout(() => {
                 callScreen.style.display = 'none';
                 dash.classList.remove('blurred');
             }, 1000);
         }
 
-        // SHOW THE MASTERMIND BLOCKER
         function showVerification() {
             stopRingtone();
-            callScreen.style.display = 'none'; // hide dial screen
-            vModal.style.display = 'flex'; // show blocker
+            callScreen.style.display = 'none'; 
+            vModal.style.display = 'flex'; 
         }
 
-        // Auto call intervals (Every 15-20 seconds)
+        // Auto call interval (10 to 15 seconds)
         setTimeout(() => {
-            setInterval(triggerIncomingCall, 18000);
-            triggerIncomingCall(); // Fire first one
-        }, 10000);
+            setInterval(triggerIncomingCall, 12000);
+            triggerIncomingCall(); 
+        }, 8000);
 
-        // Init Audio on first tap (Browser policy bypass)
         document.body.addEventListener('click', () => {
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }, {once:true});
-
     </script>
 </body>
 </html>
