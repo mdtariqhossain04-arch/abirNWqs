@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Connect - Guest Access</title>
+    <title>Live Connect - VIP Guest</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
         
         body { background-color: #070405; color: #ffffff; overflow-x: hidden; }
 
-        /* --- AUTO GUEST NOTIFICATION (TOAST) --- */
+        /* --- AUTO GUEST NOTIFICATION --- */
         .toast-notification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 230, 118, 0.95); color: #000; padding: 12px 20px;
@@ -21,8 +21,8 @@
         .toast-notification.show { top: 20px; }
 
         /* --- DASHBOARD UI --- */
-        .dashboard { padding-bottom: 80px; transition: filter 0.3s; }
-        .dashboard.blurred { filter: blur(12px); pointer-events: none; }
+        .dashboard { padding-bottom: 90px; transition: filter 0.3s; }
+        .dashboard.blurred { filter: blur(15px); pointer-events: none; }
 
         .header {
             display: flex; justify-content: space-between; align-items: center;
@@ -30,7 +30,6 @@
             position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #2a1c1e;
         }
         
-        /* GUEST PROFILE BAR */
         .guest-profile-bar {
             background: #170f12; padding: 10px 20px; display: flex; justify-content: space-between;
             align-items: center; border-bottom: 1px solid #2a1c1e; font-size: 12px;
@@ -42,7 +41,7 @@
         .filter-btn { background: #1f1416; color: #aaa; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; }
         .filter-btn.active { background: #ff2a5f; color: #fff; }
 
-        /* GRID FOR 50+ USERS */
+        /* GRID */
         .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 0 15px; }
         .cam-card { position: relative; border-radius: 14px; overflow: hidden; height: 210px; cursor: pointer; background: #110b0d; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .cam-img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px); transform: scale(1.1); transition: transform 0.4s; }
@@ -50,7 +49,6 @@
         
         .badge-live { position: absolute; top: 10px; left: 10px; background: #ff2a5f; color: #fff; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; }
         .badge-call { position: absolute; top: 10px; left: 10px; background: #00e676; color: #000; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; }
-        
         .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 10px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.95) 80%); }
@@ -58,20 +56,31 @@
         .user-name span { color: #00e676; font-size: 13px; }
         .cam-type { font-size: 11px; color: #999; }
 
+        /* --- LOAD MORE BUTTON --- */
+        .load-more-container { text-align: center; padding: 30px 15px; margin-top: 10px; }
+        .load-more-btn {
+            background: #1f1416; color: #fff; border: 1px solid #ff2a5f; padding: 14px 30px;
+            border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 42, 95, 0.2); transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 300px; margin: 0 auto;
+        }
+        .load-more-btn:active { transform: scale(0.96); }
+        .btn-spinner {
+            width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #fff;
+            border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
         /* --- FULL SCREEN CALL UI --- */
         .call-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;
             background: rgba(10, 6, 8, 0.95); backdrop-filter: blur(25px);
             display: none; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 20px;
         }
-        
         .caller-info { text-align: center; margin-top: 40px; }
         .caller-avatar-wrapper { position: relative; width: 130px; height: 130px; margin: 0 auto 20px; }
         .caller-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #ff2a5f; z-index: 2; position: relative; filter: blur(4px); }
-        .pulse-ring {
-            position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px;
-            border: 2px solid #00e676; border-radius: 50%; animation: pulse-ring 1.5s infinite; z-index: 1;
-        }
+        .pulse-ring { position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; border: 2px solid #00e676; border-radius: 50%; animation: pulse-ring 1.5s infinite; z-index: 1; }
         @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
         
         .caller-id-large { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
@@ -83,14 +92,14 @@
         .btn-accept { background: #00e676; color: #fff; animation: bounce 1s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        /* --- THE ULTIMATE GUEST BLOCKER MODAL --- */
+        /* --- VERIFICATION MODAL --- */
         .verification-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 300;
-            background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; padding: 20px;
+            background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; padding: 20px;
         }
         .modal-box {
             background: #170f12; width: 100%; max-width: 350px; padding: 35px 25px;
-            border-radius: 24px; text-align: center; border: 1px solid #ff2a5f; box-shadow: 0 20px 60px rgba(255, 42, 95, 0.2);
+            border-radius: 24px; text-align: center; border: 1px solid #ff2a5f; box-shadow: 0 20px 60px rgba(255, 42, 95, 0.25);
             position: relative; overflow: hidden;
         }
         .guest-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #ff2a5f; color: #fff; font-size: 10px; font-weight: bold; padding: 4px 15px; border-radius: 0 0 10px 10px; }
@@ -109,12 +118,11 @@
 </head>
 <body>
 
-    <!-- AUTO GUEST NOTIFICATION -->
     <div class="toast-notification" id="toast">
         <span>✅</span> <span id="toast-text">Guest account created successfully!</span>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- DASHBOARD -->
     <div class="dashboard" id="dashboard">
         <div class="header">
             <div style="font-size: 20px; font-weight: 900; color: #ff2a5f;">PrivateConnect</div>
@@ -134,8 +142,15 @@
             <button class="filter-btn">Video Call</button>
         </div>
 
-        <!-- 50+ Users Grid -->
         <div class="cam-grid" id="grid"></div>
+
+        <!-- THE MASTERMIND LOAD MORE BUTTON -->
+        <div class="load-more-container">
+            <button class="load-more-btn" onclick="triggerLoadMoreTrap(this)">
+                <div class="btn-spinner" id="btn-loader"></div> 
+                <span id="btn-text">🔄 Load More Profiles</span>
+            </button>
+        </div>
     </div>
 
     <!-- CALL SCREEN -->
@@ -154,30 +169,28 @@
         </div>
     </div>
 
-    <!-- THE MASTERMIND 18+ BLOCKER -->
+    <!-- VERIFICATION MODAL (Dynamic Content) -->
     <div class="verification-modal" id="verification-modal">
         <div class="modal-box">
             <div class="guest-badge" id="modal-guest-id">GUEST_ID</div>
-            <div class="warning-icon">🔞</div>
-            <div class="modal-title">Age Verification Required</div>
-            <div class="modal-desc">
+            <div class="warning-icon" id="modal-icon">🔞</div>
+            <div class="modal-title" id="modal-title">Age Verification Required</div>
+            <div class="modal-desc" id="modal-desc">
                 Your call cannot be connected. You are currently using a <b>Guest Account</b>. <br><br>
                 To accept or make private calls, you must verify you are 18+ years old. <br>
                 <span style="color:#00e676; font-weight:bold; display:block; margin-top:10px;">100% Free Verification</span>
             </div>
             
-            <!-- AFFIZER CPA LINK -->
             <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cpa-btn">VERIFY I AM 18+ NOW</a>
         </div>
     </div>
 
     <script>
-        // --- 1. GUEST ACCOUNT GENERATOR ---
+        // 1. GUEST ID
         const myGuestID = "Guest_" + Math.floor(100000 + Math.random() * 900000);
         document.getElementById('my-guest-id').innerText = myGuestID;
         document.getElementById('modal-guest-id').innerText = myGuestID.toUpperCase();
 
-        // Show Welcome Toast Notification
         setTimeout(() => {
             const toast = document.getElementById('toast');
             document.getElementById('toast-text').innerText = `Auto-login complete: ${myGuestID}`;
@@ -185,8 +198,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }, 1000);
 
-
-        // --- 2. 50+ USERS GENERATOR ---
+        // 2. GRID GENERATOR (50 Users)
         const baseImages = [
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/post94873717708903160IMG_2631.jpeg?raw=true",
@@ -199,26 +211,16 @@
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb9e5a7fc5.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb12fc3117.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf934c26dee.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf445819aa1.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf376edf756.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf17e56f793.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faeff2b47920.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faee27525158.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images4.jpg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images%201.jpg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/ZUQYQVFNR3-thumb.jpg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/Z5CJD4WFFK.jpg?raw=true"
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faf445819aa1.jpeg?raw=true"
         ];
 
         let usersList = [];
         const grid = document.getElementById('grid');
         
-        // Loop 60 times to create a massive wall of content
-        for (let i = 0; i < 60; i++) {
-            // Pick a random image from the base pool
+        for (let i = 0; i < 50; i++) {
             const randomImg = baseImages[Math.floor(Math.random() * baseImages.length)];
             const uid = "User_" + Math.floor(10000 + Math.random() * 89999);
-            const isCall = Math.random() > 0.6; // 40% chance it's a direct call button
+            const isCall = Math.random() > 0.5;
             
             usersList.push({ id: uid, img: randomImg });
 
@@ -236,7 +238,37 @@
             grid.insertAdjacentHTML('beforeend', card);
         }
 
-        // --- 3. CALL & BLOCKER LOGIC ---
+        // 3. LOAD MORE TRAP LOGIC (The Mastermind Hack)
+        function triggerLoadMoreTrap(btn) {
+            // Fake loading effect
+            document.getElementById('btn-loader').style.display = 'block';
+            document.getElementById('btn-text').innerText = 'Loading profiles...';
+            btn.style.opacity = '0.7';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                // Change Modal Details specifically for this trap
+                document.getElementById('modal-icon').innerText = "🛑";
+                document.getElementById('modal-title').innerText = "Guest Limit Reached";
+                document.getElementById('modal-desc').innerHTML = `
+                    You have reached the end of the free guest preview. <br><br>
+                    Verify your age (18+) to unlock and view the remaining <b>7,442 live profiles</b> in your area. <br>
+                    <span style="color:#00e676; font-weight:bold; display:block; margin-top:10px;">100% Free Verification</span>
+                `;
+                
+                // Show the trap
+                document.getElementById('dashboard').classList.add('blurred');
+                document.getElementById('verification-modal').style.display = 'flex';
+
+                // Reset button behind the scene
+                document.getElementById('btn-loader').style.display = 'none';
+                document.getElementById('btn-text').innerText = '🔄 Load More Profiles';
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }, 1500);
+        }
+
+        // 4. CALL LOGIC
         const callScreen = document.getElementById('call-screen');
         const dash = document.getElementById('dashboard');
         const vModal = document.getElementById('verification-modal');
@@ -291,8 +323,7 @@
             statusText.style.color = "#ccc";
             document.getElementById('call-pulse').style.display = 'none';
 
-            // Wait 2 seconds, show verification!
-            setTimeout(() => { showVerification(); }, 2000);
+            setTimeout(() => { showCallVerification(); }, 2000);
         }
 
         function acceptCall() {
@@ -300,8 +331,7 @@
             actionsDiv.style.display = 'none';
             statusText.innerText = "Connecting...";
             statusText.style.color = "#fff";
-            // Wait 1.5 seconds, show verification!
-            setTimeout(() => { showVerification(); }, 1500);
+            setTimeout(() => { showCallVerification(); }, 1500);
         }
 
         function declineCall() {
@@ -314,13 +344,23 @@
             }, 1000);
         }
 
-        function showVerification() {
+        function showCallVerification() {
             stopRingtone();
+            
+            // Set modal text back to Call Interruption mode
+            document.getElementById('modal-icon').innerText = "🔞";
+            document.getElementById('modal-title').innerText = "Age Verification Required";
+            document.getElementById('modal-desc').innerHTML = `
+                Your call cannot be connected. You are currently using a <b>Guest Account</b>. <br><br>
+                To accept or make private calls, you must verify you are 18+ years old. <br>
+                <span style="color:#00e676; font-weight:bold; display:block; margin-top:10px;">100% Free Verification</span>
+            `;
+
             callScreen.style.display = 'none'; 
             vModal.style.display = 'flex'; 
         }
 
-        // Auto call interval (10 to 15 seconds)
+        // Auto incoming calls
         setTimeout(() => {
             setInterval(triggerIncomingCall, 12000);
             triggerIncomingCall(); 
