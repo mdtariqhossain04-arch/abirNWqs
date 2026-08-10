@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Cams - Join Free</title>
+    <title>Live Connect - Join Free</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
         body { background-color: #1a1a1c; color: #ffffff; overflow-x: hidden; }
 
         /* --- UI FROM IMAGE --- */
-        
-        /* Top Green Banner */
         .top-banner {
             background-color: #8bc34a; color: #fff; text-align: center; padding: 8px;
             font-size: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
         }
         
-        /* Main Navigation */
         .navbar {
             background-color: #111111; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 50;
@@ -38,19 +35,18 @@
         .search-bar input { border: none; outline: none; width: 100%; font-size: 13px; color: #333; }
         .search-icon { color: #999; font-size: 14px; }
 
-        /* --- THE GUEST BAR (Psychology Trap) --- */
+        /* --- THE GUEST BAR --- */
         .guest-bar {
             background: #222; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
             font-size: 13px; border-bottom: 2px solid #8bc34a; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .guest-id-text { color: #8bc34a; font-weight: 900; font-size: 15px; letter-spacing: 1px; }
         
-        /* --- MAIN CONTENT (Large Grid from Image) --- */
+        /* --- MAIN CONTENT --- */
         .dashboard { transition: filter 0.3s; padding-bottom: 50px; }
         .dashboard.blurred { filter: blur(12px); pointer-events: none; }
 
         .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 4px; padding: 4px; }
-        
         .cam-card { position: relative; height: 280px; overflow: hidden; cursor: pointer; background: #000; }
         .cam-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
         .cam-card:hover .cam-img { transform: scale(1.05); }
@@ -65,8 +61,6 @@
         .viewers { font-size: 12px; color: #ccc; }
 
         /* --- THE MASTERMIND ADDITIONS --- */
-
-        /* 1. DIRECT INVITE MODAL */
         .direct-invite-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 400;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; padding: 20px;
@@ -90,7 +84,6 @@
             background: #8bc34a; color: #000; padding: 15px; border-radius: 30px; font-weight: 900; font-size: 15px; width: 100%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(139,195,74,0.4); text-transform: uppercase;
         }
 
-        /* 2. FLOATING CHAT WIDGET */
         .floating-chat {
             position: fixed; bottom: 20px; right: 20px; z-index: 150; display: flex; align-items: center; gap: 10px;
             background: #111; padding: 8px 15px 8px 8px; border-radius: 40px; border: 1px solid #333;
@@ -102,15 +95,17 @@
         .chat-name { font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; }
         .chat-msg { font-size: 12px; color: #8bc34a; font-weight: 600; }
 
-        /* 3. VERIFICATION MODAL (The CPA Trap) */
+        /* --- THE NEW MASTERMIND TRAP (Anti-Spam/Security) --- */
         .verification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; padding: 20px; }
         .modal-box { background: #111; width: 100%; max-width: 380px; padding: 35px 25px; border-radius: 16px; text-align: center; border: 1px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
         .guest-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #222; color: #8bc34a; font-size: 11px; font-weight: bold; padding: 6px 20px; border-radius: 0 0 10px 10px; border: 1px solid #333; border-top: none; }
         
-        .cpa-btn { background: #8bc34a; color: #000; text-decoration: none; display: block; padding: 18px; border-radius: 4px; font-weight: 900; font-size: 18px; text-transform: uppercase; margin-top: 20px; transition: 0.2s; }
+        .cpa-btn { background: #8bc34a; color: #000; text-decoration: none; display: block; padding: 18px; border-radius: 4px; font-weight: 900; font-size: 16px; text-transform: uppercase; margin-top: 20px; transition: 0.2s; box-shadow: 0 5px 15px rgba(139,195,74,0.3); }
         .cpa-btn:active { transform: scale(0.98); }
         
-        /* Mobile adjustments for nav */
+        .status-dot { display: inline-block; width: 10px; height: 10px; background-color: #ff2a7a; border-radius: 50%; margin-right: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 42, 122, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0); } }
+
         @media (max-width: 768px) {
             .search-bar { display: none; }
             .nav-links { width: 100%; justify-content: space-between; }
@@ -119,12 +114,10 @@
 </head>
 <body>
 
-    <!-- TOP GREEN BANNER -->
     <div class="top-banner" onclick="showVerificationTrap('banner')">
-        Join Free Sex Chat - No Credit Card Required
+        <span class="status-dot"></span> Secure Connection: End-to-End Encrypted
     </div>
 
-    <!-- MAIN NAVBAR (Inspired by image_f1f105.jpg) -->
     <header class="navbar">
         <div class="logo">
             <span>L</span><span>DX</span>
@@ -138,21 +131,17 @@
         </div>
         <div class="search-bar" onclick="showVerificationTrap('search')">
             <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Find by model, tag or country" readonly>
+            <input type="text" placeholder="Find by name, username or location" readonly>
         </div>
     </header>
 
-    <!-- OUR MASTERMIND GUEST BAR -->
     <div class="guest-bar">
-        <div>Your Auto-Assigned Profile: <span class="guest-id-text" id="my-guest-id">Loading...</span></div>
-        <div style="color: #ff2a7a; font-weight: bold;">Unverified</div>
+        <div>System ID: <span class="guest-id-text" id="my-guest-id">Loading...</span></div>
+        <div style="color: #ff2a7a; font-weight: bold;">Connection Unsecured</div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div class="dashboard" id="dashboard">
-        
         <div class="cam-grid" id="grid">
-            <!-- TARGET/PINNED PROFILE (Illusion of Personalization) -->
             <div class="cam-card" style="border: 3px solid #8bc34a;" onclick="showVerificationTrap('pinned')">
                 <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="cam-img" style="filter: blur(12px) brightness(0.8);">
                 <div class="badge-live" style="background: #8bc34a; color:#000; border:none;"><span style="font-size:14px;">🔒</span> VIP PRIVATE ROOM</div>
@@ -164,63 +153,59 @@
 
                 <div class="cam-info">
                     <div class="cam-name">Private Match <span>♀</span></div>
-                    <div class="viewers" style="color:#8bc34a; font-weight:bold;">Tap to enter</div>
+                    <div class="viewers" style="color:#8bc34a; font-weight:bold;">Tap to connect</div>
                 </div>
             </div>
-            
-            <!-- JavaScript will load other large grid profiles here -->
         </div>
     </div>
 
-    <!-- 1. DIRECT INVITE MODAL -->
+    <!-- DIRECT INVITE MODAL -->
     <div class="direct-invite-modal" id="invite-modal">
         <div class="invite-box">
-            <div class="invite-avatar"><div class="invite-lock">🔒</div></div>
-            <div class="invite-title">Private Room Invite</div>
+            <div class="invite-avatar"><div class="invite-lock">💬</div></div>
+            <div class="invite-title">New Message Received</div>
             <div class="invite-text">
-                The model you were interacting with has invited you to her <strong>Exclusive Private Room</strong>.<br><br>
-                <span style="color:#ff2a7a; font-size:12px;">Profile picture hidden for Guest users.</span>
+                The person you were interacting with has sent you a link to her <strong>Secure Private Room</strong>.<br><br>
+                <span style="color:#ff2a7a; font-size:12px;">End-to-End Encryption Enabled.</span>
             </div>
             <button class="accept-invite-btn" onclick="showVerificationTrap('invite')">
-                ACCEPT INVITATION
+                ENTER PRIVATE ROOM
             </button>
         </div>
     </div>
 
-    <!-- 2. FLOATING CHAT WIDGET -->
+    <!-- FLOATING CHAT WIDGET -->
     <div class="floating-chat" id="floating-chat" onclick="showVerificationTrap('chat')">
         <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="chat-img">
         <div class="chat-text">
-            <span class="chat-name">Model_Hidden 🔒</span>
+            <span class="chat-name">Hidden_Profile 🔒</span>
             <span class="chat-msg">Are you coming in? Click here!</span>
         </div>
     </div>
 
-    <!-- 3. VERIFICATION BLOCKER (CPA LINK) -->
+    <!-- THE NEW MASTERMIND BLOCKER (Anti-Spam / CPA LINK) -->
     <div class="verification-modal" id="verification-modal">
         <div class="modal-box">
             <div class="guest-badge" id="modal-guest-id">GUEST_ID</div>
-            <div style="font-size: 55px; margin-bottom: 10px;">🔞</div>
-            <div style="font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 15px; letter-spacing:-0.5px;">Age Verification</div>
+            <div style="font-size: 55px; margin-bottom: 10px;">🛡️</div>
+            <div style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 15px; letter-spacing:-0.5px;">Anti-Spam Check</div>
             <div style="font-size: 14px; color: #aaa; line-height: 1.6; margin-bottom: 25px;" id="modal-desc">
-                You are currently browsing as a <b>Guest</b>.<br><br>
-                To view HD live streams, join private rooms, or chat with models, please verify you are 18+.<br>
-                <span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & Secure.</span>
+                The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>
+                Please confirm you are a real person to establish a secure connection.<br>
+                <span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>
             </div>
             
-            <!-- AFFIZER CPA LINK -->
-            <a href="https://affizer.g2afse.com/sl?id=673e05e79ec786ee35734f69&pid=3844" class="cpa-btn">VERIFY I AM 18+</a>
-            <div style="margin-top: 15px; font-size: 11px; color: #555;">SSL Secure Connection</div>
+            <!-- NEW CPA LINK -->
+            <a href="https://quicklink.pro/mypersonalvideo80" class="cpa-btn">ACTIVATE FREE GUEST PASS</a>
+            <div style="margin-top: 15px; font-size: 11px; color: #555;">Protected by Cloudflare & SSL</div>
         </div>
     </div>
 
     <script>
-        // 1. Generate Auto Guest ID
-        const myGuestID = "Guest_" + Math.floor(100000 + Math.random() * 900000);
+        const myGuestID = "Connection_" + Math.floor(100000 + Math.random() * 900000);
         document.getElementById('my-guest-id').innerText = myGuestID;
         document.getElementById('modal-guest-id').innerText = myGuestID.toUpperCase();
 
-        // 2. Generate Grid Content (Large Image Layout like the provided picture)
         const baseImages = [
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/post94873717708903160IMG_2631.jpeg?raw=true",
             "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/photo_2026-02-01_19-40-54.jpg?raw=true",
@@ -252,38 +237,31 @@
             `);
         }
 
-        // 3. THE MASTERMIND TIMERS
-        
-        // Timer 1: Show Private Invite after 3 seconds
         setTimeout(() => {
             document.getElementById('dashboard').classList.add('blurred');
             document.getElementById('invite-modal').style.display = 'flex';
             if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }, 3000);
 
-        // Timer 2: Show Floating Chat after 7 seconds (if they bypass the first popup)
         setTimeout(() => {
             document.getElementById('floating-chat').classList.add('show');
         }, 7000);
 
-
-        // 4. CPA VERIFICATION ROUTER (Handles clicks from anywhere)
         function showVerificationTrap(source) {
-            // Hide other popups to avoid overlap
             document.getElementById('invite-modal').style.display = 'none';
             document.getElementById('floating-chat').style.display = 'none';
             
-            // Customize text dynamically
             const desc = document.getElementById('modal-desc');
+            
+            // New Psychological Trap Texts
             if(source === 'invite' || source === 'chat' || source === 'pinned') {
-                desc.innerHTML = `You are trying to join an <b>Exclusive Private Room</b>.<br><br>As a Guest, you must complete a free 18+ Age Verification to connect with your match.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & Secure.</span>`;
+                desc.innerHTML = `The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>Please confirm you are a real person to establish a secure connection.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
             } else if (source === 'search') {
-                desc.innerHTML = `Search feature is locked for <b>Guest Users</b>.<br><br>Verify you are 18+ to unlock search and find specific models or countries.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & Secure.</span>`;
+                desc.innerHTML = `Search feature is protected against <b>Bots & Spam</b>.<br><br>Activate your Free Guest Pass to unlock search and connect securely.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
             } else {
-                desc.innerHTML = `You are currently browsing as a <b>Guest</b>.<br><br>To view HD live streams, join private rooms, or chat with models, please verify you are 18+.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & Secure.</span>`;
+                desc.innerHTML = `Unsecured Connection Detected.<br><br>To view streams and join private rooms, please activate a Free Guest Pass to verify you are a human.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
             }
 
-            // Show CPA Blocker
             document.getElementById('dashboard').classList.add('blurred');
             document.getElementById('verification-modal').style.display = 'flex';
         }
