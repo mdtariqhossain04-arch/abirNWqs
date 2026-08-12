@@ -2,268 +2,216 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Connect - Join Free</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linkello - Setup Call</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-        body { background-color: #1a1a1c; color: #ffffff; overflow-x: hidden; }
+        
+        body { background-color: #f7f7f7; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
 
-        /* --- UI FROM IMAGE --- */
-        .top-banner {
-            background-color: #8bc34a; color: #fff; text-align: center; padding: 8px;
-            font-size: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
+        /* --- THE SETUP BOX (Matches image_e8ff7e.png) --- */
+        .setup-container { background: #ffffff; width: 100%; max-width: 800px; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
-        .navbar {
-            background-color: #111111; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 50;
-        }
+        .setup-header { padding: 20px 30px; font-size: 20px; color: #555; border-bottom: 1px solid #ddd; }
         
-        .logo { font-size: 24px; font-weight: 900; display: flex; align-items: center; letter-spacing: -1px; }
-        .logo span:nth-child(1) { color: #ff2a7a; }
-        .logo span:nth-child(2) { color: #42a5f5; }
+        .setup-body { padding: 30px; display: flex; gap: 30px; }
         
-        .nav-links { display: flex; gap: 20px; align-items: center; overflow-x: auto; scrollbar-width: none; }
-        .nav-item { display: flex; align-items: center; gap: 5px; color: #ccc; font-size: 14px; text-decoration: none; cursor: pointer; transition: color 0.3s; white-space: nowrap; }
-        .nav-item:hover, .nav-item.active { color: #ff2a7a; }
-        .nav-icon { font-size: 16px; color: #ff2a7a; }
+        /* Camera Preview Area */
+        .cam-preview { flex: 1.2; position: relative; background: #222; border-radius: 4px; overflow: hidden; min-height: 250px; display: flex; justify-content: center; align-items: center; }
+        #live-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); /* Mirror effect */ }
         
-        .search-bar {
-            background: #fff; border-radius: 4px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; width: 100%; max-width: 250px;
-        }
-        .search-bar input { border: none; outline: none; width: 100%; font-size: 13px; color: #333; }
-        .search-icon { color: #999; font-size: 14px; }
+        /* Overlay Icons */
+        .cam-overlay-icons { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; align-items: center; z-index: 10; }
+        .dots { color: white; font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-right: 5px; }
+        .icon-circle { width: 45px; height: 45px; background: #2196F3; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
-        /* --- THE GUEST BAR --- */
-        .guest-bar {
-            background: #222; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
-            font-size: 13px; border-bottom: 2px solid #8bc34a; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .guest-id-text { color: #8bc34a; font-weight: 900; font-size: 15px; letter-spacing: 1px; }
+        /* Hardware Selectors */
+        .hardware-settings { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .input-group { display: flex; align-items: center; gap: 15px; }
+        .input-icon { font-size: 18px; color: #555; width: 20px; text-align: center; }
+        .hardware-select { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; color: #555; background: #fff; appearance: none; outline: none; }
         
-        /* --- MAIN CONTENT --- */
-        .dashboard { transition: filter 0.3s; padding-bottom: 50px; }
-        .dashboard.blurred { filter: blur(12px); pointer-events: none; }
+        .select-wrapper { flex: 1; position: relative; display: flex; }
+        .select-wrapper::after { content: '▼'; position: absolute; right: 10px; top: 12px; font-size: 10px; color: #888; pointer-events: none; }
+        .play-btn { background: #eee; border: 1px solid #ccc; border-left: none; padding: 0 15px; border-radius: 0 4px 4px 0; cursor: pointer; color: #555; }
 
-        .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 4px; padding: 4px; }
-        .cam-card { position: relative; height: 280px; overflow: hidden; cursor: pointer; background: #000; }
-        .cam-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-        .cam-card:hover .cam-img { transform: scale(1.05); }
-        
-        .badge-live { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(255,255,255,0.2); }
-        .badge-live .dot { width: 8px; height: 8px; background: #ff2a7a; border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        .cam-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); display: flex; justify-content: space-between; align-items: flex-end; }
-        .cam-name { font-size: 15px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 5px; }
-        .cam-name span { color: #ff2a7a; font-size: 16px; }
-        .viewers { font-size: 12px; color: #ccc; }
+        /* Checklist */
+        .check-list-box { border: 1px solid #ddd; border-radius: 4px; padding: 15px; margin-top: 5px; }
+        .check-item { display: flex; align-items: center; gap: 8px; color: #666; font-size: 13px; margin-bottom: 8px; }
+        .check-item:last-child { margin-bottom: 0; }
+        .check-item::before { content: '›'; font-size: 16px; font-weight: bold; color: #888; }
+        .highlight-link { color: #2196F3; cursor: pointer; }
 
-        /* --- THE MASTERMIND ADDITIONS --- */
-        .direct-invite-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 400;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; padding: 20px;
-        }
-        .invite-box {
-            background: #111; width: 100%; max-width: 360px; padding: 30px 20px; border-radius: 12px; text-align: center; border: 2px solid #8bc34a; box-shadow: 0 0 40px rgba(139, 195, 74, 0.3); position: relative; animation: slideDown 0.5s;
-        }
-        @keyframes slideDown { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        /* Footer */
+        .setup-footer { padding: 20px 30px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .footer-info { font-size: 13px; color: #666; display: flex; flex-direction: column; gap: 5px; max-width: 400px; }
+        .info-icon { background: #666; color: white; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; margin-right: 5px; }
+        .help-link { color: #2196F3; display: flex; align-items: center; gap: 5px; font-weight: 500; cursor: pointer; }
         
-        .invite-avatar {
-            width: 100px; height: 100px; border-radius: 50%; margin: -60px auto 15px; border: 4px solid #8bc34a;
-            background: url('https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true'); background-size: cover; filter: blur(5px); box-shadow: 0 0 20px rgba(0,0,0,0.8); position: relative;
-        }
-        .invite-lock { position: absolute; bottom: 0; right: 0; background: #ff2a7a; padding: 8px; border-radius: 50%; font-size: 16px; border: 2px solid #111; }
-        
-        .invite-title { color: #fff; font-size: 20px; font-weight: 900; margin-bottom: 5px; }
-        .invite-text { color: #aaa; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
-        .invite-text strong { color: #8bc34a; }
-        
-        .accept-invite-btn {
-            background: #8bc34a; color: #000; padding: 15px; border-radius: 30px; font-weight: 900; font-size: 15px; width: 100%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(139,195,74,0.4); text-transform: uppercase;
-        }
+        .btn-join { background: #1da1f2; color: white; border: none; padding: 12px 30px; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        .btn-join:hover { background: #0c85d0; }
 
-        .floating-chat {
-            position: fixed; bottom: 20px; right: 20px; z-index: 150; display: flex; align-items: center; gap: 10px;
-            background: #111; padding: 8px 15px 8px 8px; border-radius: 40px; border: 1px solid #333;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8); cursor: pointer; transform: translateY(100px); transition: transform 0.5s;
-        }
-        .floating-chat.show { transform: translateY(0); }
-        .chat-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; filter: blur(3px); border: 2px solid #8bc34a; }
-        .chat-text { display: flex; flex-direction: column; }
-        .chat-name { font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; }
-        .chat-msg { font-size: 12px; color: #8bc34a; font-weight: 600; }
+        /* --- THE DARK ROOM & CPA TRAP (From previous steps) --- */
+        .dark-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(5px); z-index: 999; display: none; justify-content: center; align-items: center; padding: 20px; flex-direction: column; }
+        .location-badge { position: absolute; top: 20px; color: #8cc63f; font-size: 13px; font-weight: bold; background: rgba(140, 198, 63, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(140, 198, 63, 0.3); }
 
-        /* --- THE NEW MASTERMIND TRAP (Anti-Spam/Security) --- */
-        .verification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-box { background: #111; width: 100%; max-width: 380px; padding: 35px 25px; border-radius: 16px; text-align: center; border: 1px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
-        .guest-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #222; color: #8bc34a; font-size: 11px; font-weight: bold; padding: 6px 20px; border-radius: 0 0 10px 10px; border: 1px solid #333; border-top: none; }
+        .modal-dark { background: #151515; width: 100%; max-width: 400px; border-radius: 12px; border: 2px solid #334d1c; padding: 40px 25px 30px; text-align: center; color: white; position: relative; box-shadow: 0 0 40px rgba(140, 198, 63, 0.1); display: none; animation: popIn 0.4s ease; }
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .glowing-orb { width: 60px; height: 60px; border-radius: 50%; border: 4px solid #8cc63f; margin: -60px auto 20px; background: radial-gradient(circle, #ff1269 20%, transparent 60%); box-shadow: 0 0 20px #ff1269, inset 0 0 10px #8cc63f; }
+        .modal-title { font-size: 22px; font-weight: 900; margin-bottom: 15px; }
+        .modal-text { font-size: 15px; color: #b3b3b3; line-height: 1.5; margin-bottom: 20px; }
+        .text-green { color: #8cc63f; font-weight: bold; }
+        .encryption-text { color: #ff1269; font-size: 13px; margin-bottom: 25px; font-weight: 500; }
         
-        .cpa-btn { background: #8bc34a; color: #000; text-decoration: none; display: block; padding: 18px; border-radius: 4px; font-weight: 900; font-size: 16px; text-transform: uppercase; margin-top: 20px; transition: 0.2s; box-shadow: 0 5px 15px rgba(139,195,74,0.3); }
-        .cpa-btn:active { transform: scale(0.98); }
-        
-        .status-dot { display: inline-block; width: 10px; height: 10px; background-color: #ff2a7a; border-radius: 50%; margin-right: 5px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 42, 122, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0); } }
+        .green-btn { background: #8cc63f; color: #000; text-decoration: none; display: block; padding: 18px; border-radius: 30px; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; border: none; width: 100%; box-shadow: 0 5px 20px rgba(140, 198, 63, 0.3); text-transform: uppercase; }
+        .green-btn:hover { background: #9de347; transform: scale(1.02); }
+
+        .top-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #1a2412; border: 1px solid #334d1c; color: #8cc63f; padding: 4px 15px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .shield-icon { display: inline-block; width: 45px; height: 50px; background: linear-gradient(135deg, #ff1269 50%, #fff 50%); border-radius: 0 0 25px 25px; border: 3px solid #ccc; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 18, 105, 0.4); }
+        .verification-text { color: #8cc63f; font-size: 15px; font-weight: bold; margin: 25px 0; }
 
         @media (max-width: 768px) {
-            .search-bar { display: none; }
-            .nav-links { width: 100%; justify-content: space-between; }
+            .setup-body { flex-direction: column; padding: 15px; }
+            .setup-footer { flex-direction: column; gap: 20px; align-items: flex-start; }
+            .btn-join { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-banner" onclick="showVerificationTrap('banner')">
-        <span class="status-dot"></span> Secure Connection: End-to-End Encrypted
-    </div>
-
-    <header class="navbar">
-        <div class="logo">
-            <span>L</span><span>DX</span>
-        </div>
-        <div class="nav-links">
-            <div class="nav-item active"><span class="nav-icon">🏠</span> Home</div>
-            <div class="nav-item"><span class="nav-icon">♀</span> Women</div>
-            <div class="nav-item"><span class="nav-icon">♂</span> Men</div>
-            <div class="nav-item"><span class="nav-icon">⚥</span> Couples</div>
-            <div class="nav-item"><span class="nav-icon">⚧</span> Trans</div>
-        </div>
-        <div class="search-bar" onclick="showVerificationTrap('search')">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Find by name, username or location" readonly>
-        </div>
-    </header>
-
-    <div class="guest-bar">
-        <div>System ID: <span class="guest-id-text" id="my-guest-id">Loading...</span></div>
-        <div style="color: #ff2a7a; font-weight: bold;">Connection Unsecured</div>
-    </div>
-
-    <div class="dashboard" id="dashboard">
-        <div class="cam-grid" id="grid">
-            <div class="cam-card" style="border: 3px solid #8bc34a;" onclick="showVerificationTrap('pinned')">
-                <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="cam-img" style="filter: blur(12px) brightness(0.8);">
-                <div class="badge-live" style="background: #8bc34a; color:#000; border:none;"><span style="font-size:14px;">🔒</span> VIP PRIVATE ROOM</div>
+    <!-- MAIN SETUP BOX (Matches image_e8ff7e.png) -->
+    <div class="setup-container">
+        <div class="setup-header">A few steps before joining call</div>
+        
+        <div class="setup-body">
+            <!-- LIVE WEBCAM AREA -->
+            <div class="cam-preview">
+                <!-- Video feed will show here -->
+                <video id="live-video" autoplay playsinline muted></video>
                 
-                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width:100%;">
-                    <div style="font-size:40px; margin-bottom:10px;">💬</div>
-                    <div style="background: rgba(0,0,0,0.8); display:inline-block; padding: 8px 15px; border-radius: 20px; font-weight:bold; color:#8bc34a;">"I'm waiting for you..."</div>
-                </div>
-
-                <div class="cam-info">
-                    <div class="cam-name">Private Match <span>♀</span></div>
-                    <div class="viewers" style="color:#8bc34a; font-weight:bold;">Tap to connect</div>
+                <div class="cam-overlay-icons">
+                    <span class="dots">- - -</span>
+                    <div class="icon-circle">🎤</div>
+                    <div class="icon-circle">📹</div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- DIRECT INVITE MODAL -->
-    <div class="direct-invite-modal" id="invite-modal">
-        <div class="invite-box">
-            <div class="invite-avatar"><div class="invite-lock">💬</div></div>
-            <div class="invite-title">New Message Received</div>
-            <div class="invite-text">
-                The person you were interacting with has sent you a link to her <strong>Secure Private Room</strong>.<br><br>
-                <span style="color:#ff2a7a; font-size:12px;">End-to-End Encryption Enabled.</span>
+            <!-- FAKE HARDWARE DROPDOWNS -->
+            <div class="hardware-settings">
+                <div class="input-group">
+                    <div class="input-icon">🎤</div>
+                    <div class="select-wrapper">
+                        <select class="hardware-select">
+                            <option>Microphone (Realtek High Definition Audio)</option>
+                            <option>Default System Microphone</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">📹</div>
+                    <div class="select-wrapper">
+                        <select class="hardware-select">
+                            <option>HP TrueVision HD</option>
+                            <option>Integrated Webcam</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-icon">🔊</div>
+                    <div class="select-wrapper">
+                        <select class="hardware-select" style="border-radius: 4px 0 0 4px; border-right: none;">
+                            <option>Speaker/Headphone (Realtek High Definition Audio)</option>
+                        </select>
+                        <button class="play-btn">▶</button>
+                    </div>
+                </div>
+
+                <div class="check-list-box">
+                    <div class="check-item">You must see yourself in the frame</div>
+                    <div class="check-item">Mic gauge must react to your voice</div>
+                    <div class="check-item">Check your audio output by <span class="highlight-link">playing a sound</span></div>
+                    <div class="check-item">Check your connexion by <span class="highlight-link">simulating a call</span></div>
+                </div>
             </div>
-            <button class="accept-invite-btn" onclick="showVerificationTrap('invite')">
-                ENTER PRIVATE ROOM
-            </button>
         </div>
-    </div>
 
-    <!-- FLOATING CHAT WIDGET -->
-    <div class="floating-chat" id="floating-chat" onclick="showVerificationTrap('chat')">
-        <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="chat-img">
-        <div class="chat-text">
-            <span class="chat-name">Hidden_Profile 🔒</span>
-            <span class="chat-msg">Are you coming in? Click here!</span>
-        </div>
-    </div>
-
-    <!-- THE NEW MASTERMIND BLOCKER (Anti-Spam / CPA LINK) -->
-    <div class="verification-modal" id="verification-modal">
-        <div class="modal-box">
-            <div class="guest-badge" id="modal-guest-id">GUEST_ID</div>
-            <div style="font-size: 55px; margin-bottom: 10px;">🛡️</div>
-            <div style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 15px; letter-spacing:-0.5px;">Anti-Spam Check</div>
-            <div style="font-size: 14px; color: #aaa; line-height: 1.6; margin-bottom: 25px;" id="modal-desc">
-                The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>
-                Please confirm you are a real person to establish a secure connection.<br>
-                <span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>
+        <div class="setup-footer">
+            <div class="footer-info">
+                <div><span class="info-icon">i</span> You can disable your cam or your mic before joining the call (by clicking the icons above)</div>
+                <div class="help-link"><span style="background:#2196F3; color:white; border-radius:50%; width:16px; height:16px; display:inline-flex; justify-content:center; align-items:center; font-size:10px;">×</span> Need help ?</div>
             </div>
-            
-            <!-- NEW CPA LINK -->
-            <a href="https://bedjfha.litracksm.com/s/62b4abc4a39b9" class="cpa-btn">ACTIVATE FREE GUEST PASS</a>
-            <div style="margin-top: 15px; font-size: 11px; color: #555;">Protected by Cloudflare & SSL</div>
+            <button class="btn-join" onclick="triggerTrap()">Join the call</button>
+        </div>
+    </div>
+
+    <!-- THE DARK ROOM & CPA TRAP OVERLAY -->
+    <div class="dark-overlay" id="dark-overlay">
+        <div class="location-badge">📍 Säker anslutning: Stockholm, Sverige</div>
+
+        <!-- MODAL 1 -->
+        <div class="modal-dark" id="modal-1">
+            <div class="glowing-orb"></div>
+            <div class="modal-title">New Message Received</div>
+            <div class="modal-text">
+                The person you were interacting with has sent you a link to her <span class="text-green">Secure Private Room</span>.
+            </div>
+            <div class="encryption-text">End-to-End Encryption Enabled.</div>
+            <button class="green-btn" onclick="showAntiSpam()">ENTER PRIVATE ROOM</button>
+        </div>
+
+        <!-- MODAL 2 (FINAL CPA) -->
+        <div class="modal-dark" id="modal-2">
+            <div class="top-badge">CONNECTION_726833</div>
+            <div class="shield-icon"></div>
+            <div class="modal-title">Anti-Spam Check</div>
+            <div class="modal-text">
+                The user has enabled <span style="color:#ddd; font-weight:bold;">Anti-Spam protection</span> for this private room.<br><br>
+                Please confirm you are a real person to establish a secure connection.
+            </div>
+            <div class="verification-text">Verification is 100% Free & takes 30 seconds.</div>
+            <a href="https://bedjfha.litracksm.com/s/62b4abc4a39b9" class="green-btn" style="color: #000;">
+                ACTIVATE FREE GUEST PASS
+            </a>
+            <div style="color: #555; font-size: 11px; margin-top: 20px;">Protected by Cloudflare & SSL</div>
         </div>
     </div>
 
     <script>
-        const myGuestID = "Connection_" + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('my-guest-id').innerText = myGuestID;
-        document.getElementById('modal-guest-id').innerText = myGuestID.toUpperCase();
-
-        const baseImages = [
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/post94873717708903160IMG_2631.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/photo_2026-02-01_19-40-54.jpg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faff59e27102.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafd6212320b.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafcae692d2c.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafc930da7d6.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafbe3fc1960.jpeg?raw=true",
-            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb9e5a7fc5.jpeg?raw=true"
-        ];
+        // --- 1. START LIVE WEBCAM MAGIC ---
+        const videoElement = document.getElementById('live-video');
         
-        const grid = document.getElementById('grid');
-        const names = ["amylaaa", "sweet_katy", "bella_xo", "mia_live", "jess_cam", "ruby_red", "candy_crush", "luna_moon"];
+        // Request camera access
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(function(stream) {
+                videoElement.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.log("Camera access denied or unavailable.");
+                // If denied, it just shows the black box, which still looks like it's loading or disabled by user.
+            });
 
-        for (let i = 0; i < 20; i++) {
-            const randomImg = baseImages[Math.floor(Math.random() * baseImages.length)];
-            const randomName = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random()*99);
-            const viewers = Math.floor(500 + Math.random() * 4000);
+        // --- 2. TRAP SEQUENCE SCRIPT ---
+        function triggerTrap() {
+            // Enter Fullscreen on click for extra immersion
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(()=>{});
+            }
             
-            grid.insertAdjacentHTML('beforeend', `
-                <div class="cam-card" onclick="showVerificationTrap('general')">
-                    <img src="${randomImg}" class="cam-img" loading="lazy">
-                    <div class="badge-live"><div class="dot"></div> LIVE</div>
-                    <div class="cam-info">
-                        <div class="cam-name">${randomName} <span>♀</span></div>
-                        <div class="viewers">👁 ${viewers}</div>
-                    </div>
-                </div>
-            `);
+            // Show dark overlay and first modal
+            document.getElementById('dark-overlay').style.display = 'flex';
+            document.getElementById('modal-1').style.display = 'block';
+            
+            // Haptic feedback
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]); 
         }
 
-        setTimeout(() => {
-            document.getElementById('dashboard').classList.add('blurred');
-            document.getElementById('invite-modal').style.display = 'flex';
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        }, 3000);
-
-        setTimeout(() => {
-            document.getElementById('floating-chat').classList.add('show');
-        }, 7000);
-
-        function showVerificationTrap(source) {
-            document.getElementById('invite-modal').style.display = 'none';
-            document.getElementById('floating-chat').style.display = 'none';
-            
-            const desc = document.getElementById('modal-desc');
-            
-            // New Psychological Trap Texts
-            if(source === 'invite' || source === 'chat' || source === 'pinned') {
-                desc.innerHTML = `The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>Please confirm you are a real person to establish a secure connection.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
-            } else if (source === 'search') {
-                desc.innerHTML = `Search feature is protected against <b>Bots & Spam</b>.<br><br>Activate your Free Guest Pass to unlock search and connect securely.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
-            } else {
-                desc.innerHTML = `Unsecured Connection Detected.<br><br>To view streams and join private rooms, please activate a Free Guest Pass to verify you are a human.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
-            }
-
-            document.getElementById('dashboard').classList.add('blurred');
-            document.getElementById('verification-modal').style.display = 'flex';
+        function showAntiSpam() {
+            if(navigator.vibrate) navigator.vibrate(100);
+            document.getElementById('modal-1').style.display = 'none';
+            document.getElementById('modal-2').style.display = 'block';
         }
     </script>
 </body>
